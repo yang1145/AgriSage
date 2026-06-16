@@ -1,0 +1,57 @@
+// ============================================
+// AgriSage Global Styles
+// ============================================
+@use './variables' as *;
+
+// Reset
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  font-family: $font-sans;
+  background: $bg-primary;
+  color: $text-primary;
+}
+
+// Scrollbar styling
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.15);
+  border-radius: 3px;
+
+  &:hover {
+    background: rgba(0, 240, 255, 0.25);
+  }
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+// Selection
+::selection {
+  background: rgba(0, 240, 255, 0.2);
+  color: $accent-cyan;
+}
+
+// Custom utility classes
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-container {
+  padding: $spacing-lg;
+}

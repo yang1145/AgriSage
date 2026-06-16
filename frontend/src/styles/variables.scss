@@ -1,0 +1,88 @@
+// ============================================
+// AgriSage HUD Theme - Variables
+// 科幻 HUD 甘蔗农场管理系统视觉变量
+// ============================================
+
+// --- Color System ---
+// Backgrounds
+$bg-primary: #0a0f14;
+$bg-secondary: #111820;
+$bg-card: #0d1117;
+$bg-overlay: rgba(10, 15, 20, 0.85);
+
+// Accent Colors
+$accent-cyan: #00f0ff;
+$accent-orange: #ff6b35;
+$accent-green: #39ff14;
+
+// Text Colors
+$text-primary: #e0e6ed;
+$text-secondary: #8b9bb4;
+$text-muted: #4a5568;
+
+// Border Colors
+$border-color: #1a2332;
+$border-glow: #00f0ff33;
+
+// Status Colors (derived from accents)
+$status-idle: #4a5568;
+$status-growing: $accent-green;
+$status-harvested: $accent-orange;
+$status-warning: $accent-orange;
+$status-error: #ff4757;
+$status-info: $accent-cyan;
+
+// --- Typography ---
+$font-mono: 'Roboto Mono', 'DIN', monospace;
+$font-sans: 'Source Han Sans CN', 'Noto Sans SC', sans-serif;
+
+// Font Sizes
+$font-size-xs: 10px;
+$font-size-sm: 12px;
+$font-size-base: 14px;
+$font-size-md: 16px;
+$font-size-lg: 20px;
+$font-size-xl: 24px;
+$font-size-2xl: 32px;
+$font-size-3xl: 40px;
+
+// --- Spacing ---
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-2xl: 48px;
+
+// --- Border Radius ---
+$radius-sm: 2px;
+$radius-md: 4px;
+$radius-lg: 8px;
+$radius-xl: 12px;
+
+// --- Z-Index Layers ---
+$z-dropdown: 1000;
+$z-sticky: 1020;
+$z-fixed: 1030;
+$z-modal-backdrop: 1040;
+$z-modal: 1050;
+$z-popover: 1060;
+$z-tooltip: 1070;
+$z-scanline: 9999;
+
+// --- Transitions ---
+$transition-fast: 0.15s ease;
+$transition-base: 0.25s ease;
+$transition-slow: 0.4s ease;
+$transition-glow: 0.3s ease-in-out;
+
+// --- Shadows ---
+$shadow-card: 0 2px 12px rgba(0, 0, 0, 0.5);
+$shadow-glow-cyan: 0 0 12px rgba(0, 240, 255, 0.3);
+$shadow-glow-green: 0 0 12px rgba(57, 255, 20, 0.3);
+$shadow-glow-orange: 0 0 12px rgba(255, 107, 53, 0.3);
+
+// --- Layout ---
+$sidebar-width: 220px;
+$sidebar-collapsed-width: 64px;
+$topbar-height: 48px;

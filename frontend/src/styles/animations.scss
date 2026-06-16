@@ -1,0 +1,168 @@
+// ============================================
+// AgriSage HUD Theme - Animations
+// 科幻 HUD 动画效果
+// ============================================
+@use './variables' as *;
+
+// --- Keyframes ---
+
+// Scanline sweep: bright line moves from top to bottom
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+// Breathing/pulsing glow
+@keyframes breathe {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+// Color pulse animations
+@keyframes pulse-cyan {
+  0%, 100% {
+    box-shadow: 0 0 4px rgba(0, 240, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.6), 0 0 24px rgba(0, 240, 255, 0.2);
+  }
+}
+
+@keyframes pulse-green {
+  0%, 100% {
+    box-shadow: 0 0 4px rgba(57, 255, 20, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(57, 255, 20, 0.6), 0 0 24px rgba(57, 255, 20, 0.2);
+  }
+}
+
+@keyframes pulse-orange {
+  0%, 100% {
+    box-shadow: 0 0 4px rgba(255, 107, 53, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(255, 107, 53, 0.6), 0 0 24px rgba(255, 107, 53, 0.2);
+  }
+}
+
+@keyframes pulse-gray {
+  0%, 100% {
+    box-shadow: 0 0 4px rgba(74, 85, 104, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 8px rgba(74, 85, 104, 0.4);
+  }
+}
+
+// Text glow effect
+@keyframes glow {
+  0%, 100% {
+    text-shadow: 0 0 4px currentColor;
+  }
+  50% {
+    text-shadow: 0 0 12px currentColor, 0 0 24px currentColor;
+  }
+}
+
+// Slide in from left
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Slide in from right
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Fade in from bottom
+@keyframes fadeInUp {
+  0% {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Slow hexagon rotation for decorative elements
+@keyframes hexSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// --- Utility Classes ---
+
+.animate-breathe {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+.animate-pulse-cyan {
+  animation: pulse-cyan 2s ease-in-out infinite;
+}
+
+.animate-pulse-green {
+  animation: pulse-green 2s ease-in-out infinite;
+}
+
+.animate-pulse-orange {
+  animation: pulse-orange 2s ease-in-out infinite;
+}
+
+.animate-pulse-gray {
+  animation: pulse-gray 2.5s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.animate-scanline {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      $accent-cyan,
+      transparent
+    );
+    animation: scanline 3s linear infinite;
+    pointer-events: none;
+  }
+}
