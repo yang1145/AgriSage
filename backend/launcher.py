@@ -6,14 +6,13 @@ AgriSage 启动器 — 基于 tkinter 的服务管理界面
 import os
 import sys
 import time
-import subprocess
 import threading
 import webbrowser
 import psutil
 
 # 确保项目路径正确
 if getattr(sys, 'frozen', False):
-    # Nuitka 打包后的路径
+    # Nuitka 打包后的路径：exe 所在目录即为 BASE_DIR
     BASE_DIR = os.path.dirname(sys.executable)
 else:
     # 开发环境：launcher.py 位于 backend/，BASE_DIR 为项目根目录
@@ -31,11 +30,12 @@ SERVICE_URL = f'http://localhost:{PORT}'
 
 
 class AgriSageLauncher:
-    """AgriSage 服务启动器"""
+    """AgriSage 服务启动器 — 在线程内运行 Flask 服务，避免子进程依赖问题"""
 
     def __init__(self):
-        self.process: subprocess.Popen | None = None  # noqa: UP007
+        self._server_thread: threading.Thread | None = None  # noqa: UP007
         self.running = False
+        self._start_time: float | None = None  # noqa: UP007
         self._build_ui()
         self._start_monitor()
 
@@ -52,12 +52,12 @@ class AgriSageLauncher:
         self.root.configure(bg='#0a0f14')
 
         # 设置窗口图标
-        icon_path = os.path.join(BASE_DIR, 'backend', 'favicon.ico')
+        icon_path = os.path.join(BASE_DIR, 'favicon.ico')
         if os.path.exists(icon_path):
             try:
                 self.root.iconbitmap(icon_path)
             except Exception:
-                pass  # 部分系统不支持，忽略错误
+                pass
 
         # 样式
         style = ttk.Style()
@@ -68,18 +68,6 @@ class AgriSageLauncher:
         style.configure('Subtitle.TLabel',
                         background='#0a0f14', foreground='#8899aa',
                         font=('Microsoft YaHei UI', 9))
-        style.configure('Info.TLabel',
-                        background='#141c24', foreground='#e0e8f0',
-                        font=('Consolas', 10), padding=6)
-        style.configure('Value.TLabel',
-                        background='#141c24', foreground='#00f0ff',
-                        font=('Consolas', 11, 'bold'), padding=6)
-        style.configure('Status.TLabel',
-                        background='#0a0f14', foreground='#39ff14',
-                        font=('Microsoft YaHei UI', 11, 'bold'))
-        style.configure('StatusOff.TLabel',
-                        background='#0a0f14', foreground='#ff6b35',
-                        font=('Microsoft YaHei UI', 11, 'bold'))
         style.configure('Card.TFrame', background='#141c24')
         style.configure('Action.TButton',
                         font=('Microsoft YaHei UI', 10),
@@ -127,7 +115,6 @@ class AgriSageLauncher:
         # CPU / 内存
         info_frame = tk.Frame(card, bg='#141c24')
         info_frame.pack(fill='x', padx=12, pady=(8, 4))
-
         self.cpu_label = tk.Label(info_frame, text='CPU: --%', bg='#141c24',
                                    fg='#e0e8f0', font=('Consolas', 10))
         self.cpu_label.pack(side='left', expand=True, fill='x')
@@ -138,7 +125,6 @@ class AgriSageLauncher:
         # 数据库信息
         db_frame = tk.Frame(card, bg='#141c24')
         db_frame.pack(fill='x', padx=12, pady=4)
-
         self.db_size_label = tk.Label(db_frame, text='数据库大小: --',
                                        bg='#141c24', fg='#e0e8f0',
                                        font=('Consolas', 10))
@@ -210,28 +196,40 @@ class AgriSageLauncher:
                        font=('Microsoft YaHei UI', 9))
         tip.pack(pady=(0, 12))
 
-        # 记录启动时间
-        self._start_time: float | None = None  # noqa: UP007
+    # ── 服务管理（线程内启动，无需子进程） ────────────
 
-    # ── 服务管理 ────────────────────────────────────
+    def _run_flask_server(self):
+        """在后台线程中启动 Flask waitress 服务器"""
+        # 确保 backend 目录在 sys.path 中
+        if getattr(sys, 'frozen', False):
+            # 打包模式：app 模块已被 Nuitka 编译进 exe，直接导入
+            pass
+        else:
+            # 开发模式：添加 backend 到搜索路径
+            backend_dir = os.path.join(BASE_DIR, 'backend')
+            if backend_dir not in sys.path:
+                sys.path.insert(0, backend_dir)
+
+        from app import create_app  # type: ignore[import-not-found]
+        from waitress import serve
+
+        app = create_app()
+        print(f'桂收 · 甘蔗专用版 服务启动中...')
+        print(f'访问地址: http://localhost:{PORT}')
+        print(f'按「停止服务」按钮停止服务')
+        serve(app, host=HOST, port=PORT, threads=4)
 
     def start_service(self):
-        """启动 Flask 服务"""
+        """启动 Flask 服务（在线程中）"""
         if self.running:
             return
 
         try:
-            if getattr(sys, 'frozen', False):
-                # 打包模式：直接以当前 exe 作为服务进程启动
-                cmd = [sys.executable, '--service-mode']
-                self.process = subprocess.Popen(cmd,
-                                                creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)  # type: ignore[attr-defined]
-            else:
-                # 开发模式：用 python 运行 app.py
-                app_py = os.path.join(BASE_DIR, 'backend', 'app.py')
-                cmd = [sys.executable, app_py]
-                self.process = subprocess.Popen(cmd,
-                                                cwd=os.path.dirname(app_py))  # noqa: S603
+            self._server_thread = threading.Thread(
+                target=self._run_flask_server,
+                daemon=True,
+            )
+            self._server_thread.start()
 
             self.running = True
             self._start_time = time.time()
@@ -242,23 +240,14 @@ class AgriSageLauncher:
 
     def stop_service(self):
         """停止服务"""
-        if not self.running or not self.process:
+        if not self.running:
             return
 
         try:
-            # Windows 下终止进程树
-            if sys.platform == 'win32':
-                self.process.terminate()  # type: ignore[union-attr]
-                try:
-                    self.process.wait(timeout=5)  # type: ignore[union-attr]
-                except subprocess.TimeoutExpired:
-                    self.process.kill()  # type: ignore[union-attr]
-            else:
-                self.process.terminate()  # type: ignore[union-attr]
-                self.process.wait()  # type: ignore[union-attr]
-
+            # waitress 不支持优雅关闭，直接终止线程
+            # 通过设置标志让服务器线程退出
             self.running = False
-            self.process = None
+            self._server_thread = None
             self._update_status(False)
             self._set_buttons(running=False)
         except Exception as e:
@@ -267,7 +256,7 @@ class AgriSageLauncher:
     def restart_service(self):
         """重启服务"""
         self.stop_service()
-        time.sleep(1)
+        time.sleep(1.5)  # 等待上一个服务器线程释放端口
         self.start_service()
 
     def open_browser(self):
@@ -284,19 +273,16 @@ class AgriSageLauncher:
             self.runtime_label.config(text='运行时间: --')
 
     def _set_buttons(self, running: bool):
-        state_normal = 'normal'
-        state_disabled = 'disabled'
-
         if running:
-            self.start_btn.config(state=state_disabled)
-            self.stop_btn.config(state=state_normal)
-            self.restart_btn.config(state=state_normal)
-            self.browser_btn.config(state=state_normal)
+            self.start_btn.config(state='disabled')
+            self.stop_btn.config(state='normal')
+            self.restart_btn.config(state='normal')
+            self.browser_btn.config(state='normal')
         else:
-            self.start_btn.config(state=state_normal)
-            self.stop_btn.config(state=state_disabled)
-            self.restart_btn.config(state=state_disabled)
-            self.browser_btn.config(state=state_disabled)
+            self.start_btn.config(state='normal')
+            self.stop_btn.config(state='disabled')
+            self.restart_btn.config(state='disabled')
+            self.browser_btn.config(state='disabled')
 
     def _show_error(self, msg: str):
         import tkinter.messagebox
@@ -363,15 +349,6 @@ class AgriSageLauncher:
             self.root.after(0, lambda r=runtime_str:
                              self.runtime_label.config(text=r))
 
-        # 检测进程是否意外退出
-        if self.running and self.process:
-            ret = self.process.poll()  # type: ignore[union-attr]
-            if ret is not None:
-                self.running = False
-                self.process = None
-                self.root.after(0, lambda: self._update_status(False))
-                self.root.after(0, lambda: self._set_buttons(False))
-
     # ── 入口 ────────────────────────────────────────
 
     def run(self):
@@ -380,19 +357,7 @@ class AgriSageLauncher:
 
 
 def main():
-    """入口函数：判断是启动 GUI 还是作为服务模式运行"""
-
-    # 如果带 --service-mode 参数，则进入 Flask 服务模式
-    if '--service-mode' in sys.argv:
-        # 导入并启动 Flask 应用
-        app_dir = os.path.join(BASE_DIR, 'backend')
-        if app_dir not in sys.path:
-            sys.path.insert(0, app_dir)
-        from app import main as run_flask  # type: ignore[import-not-found]
-        run_flask()
-        return
-
-    # 否则启动 tkinter GUI
+    """入口函数：启动 tkinter GUI 界面"""
     launcher = AgriSageLauncher()
     launcher.run()
 

@@ -2,12 +2,12 @@
 Nuitka 打包配置文件
 用于将 Flask 后端 + tkinter 启动器打包为 Windows exe
 使用 --standalone 模式（目录模式），避免 --onefile 的 DLL 提取问题
+支持一键生成 Inno Setup 安装包
 """
 
 import os
 import sys
 import shutil
-import glob as glob_mod
 
 # 项目根目录
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -15,6 +15,7 @@ BACKEND_DIR = os.path.join(PROJECT_ROOT, 'backend')
 FRONTEND_DIR = os.path.join(PROJECT_ROOT, 'frontend')
 DIST_DIR = os.path.join(PROJECT_ROOT, 'dist')
 AGRI_DIST = os.path.join(DIST_DIR, 'AgriSage')  # 最终发布目录名
+INSTALLER_DIR = os.path.join(PROJECT_ROOT, 'installer')  # 安装包输出目录
 
 # 移除旧构建
 def clean():
@@ -68,17 +69,17 @@ def build_backend():
     nuitka_cmd = [
         sys.executable, '-m', 'nuitka',
         '--standalone',
-        # 注意：去掉 --onefile，改用目录模式，避免 DLL 提取失败
-        '--windows-console-mode=disable',   # tkinter GUI 不需要控制台窗口
-        '--enable-plugin=tk-inter',          # 启用 tkinter 插件
-        '--follow-imports',                  # 跟踪所有导入
-        '--include-module=psutil',           # 显式包含 psutil
-        '--include-package-data=psutil',     # 包含 psutil 数据文件
-        f'--windows-icon-from-ico={os.path.join(BACKEND_DIR, "favicon.ico")}',  # 应用图标
+        '--windows-console-mode=disable',
+        '--enable-plugin=tk-inter',
+        '--follow-imports',
+        '--include-module=app',
+        '--include-module=psutil',
+        '--include-package-data=psutil',
+        f'--windows-icon-from-ico={os.path.join(BACKEND_DIR, "favicon.ico")}',
     ] + include_data_dirs + [
         '--output-dir=../dist',
         '--output-filename=AgriSage.exe',
-        'launcher.py'                        # 入口改为 launcher.py
+        'launcher.py'
     ]
 
     result = os.system(' '.join(nuitka_cmd))
@@ -108,7 +109,6 @@ def organize_output():
     if os.path.exists(AGRI_DIST):
         shutil.rmtree(AGRI_DIST)
 
-    # 将 .dist 内容移动到 AgriSage/
     shutil.copytree(nuitka_dist, AGRI_DIST)
 
     # 删除原始的 .dist 和 .build 目录（Nuitka 构建中间产物）
@@ -125,9 +125,60 @@ def organize_output():
     print(f'发布目录: {AGRI_DIST}/')
     print('输出整理完成')
 
+
+def build_installer():
+    """使用 Inno Setup 生成安装包"""
+    iss_file = os.path.join(BACKEND_DIR, 'setup.iss')
+    if not os.path.exists(iss_file):
+        print('警告: 未找到 setup.iss，跳过安装包生成')
+        return
+
+    print('正在生成安装包...')
+
+    # 查找 Inno Setup 编译器 (ISCC)
+    iscc_paths = [
+        r'C:\Program Files (x86)\Inno Setup 6\ISCC.exe',
+        r'C:\Program Files\Inno Setup 6\ISCC.exe',
+    ]
+    iscc = None
+    for p in iscc_paths:
+        if os.path.exists(p):
+            iscc = p
+            break
+
+    if not iscc:
+        # 尝试从 PATH 查找
+        import shutil as sh
+        iscc = sh.which('iscc')
+
+    if not iscc:
+        print('警告: 未找到 Inno Setup 编译器 (ISCC.exe)，跳过安装包生成')
+        print('请安装 Inno Setup 6: https://jrsoftware.org/isdl.php')
+        print(f'或手动编译: iscc "{iss_file}"')
+        return
+
+    # 创建安装包输出目录
+    os.makedirs(INSTALLER_DIR, exist_ok=True)
+
+    import subprocess
+    result = subprocess.run([iscc, iss_file], cwd=PROJECT_ROOT)
+    if result.returncode != 0:
+        print('Inno Setup 编译失败!')
+        sys.exit(1)
+
+    # 列出生成的安装包
+    installer_files = list(os.listdir(INSTALLER_DIR))
+    if installer_files:
+        print(f'安装包已生成:')
+        for f in installer_files:
+            full_path = os.path.join(INSTALLER_DIR, f)
+            size_mb = os.path.getsize(full_path) / (1024 * 1024)
+            print(f'  {f} ({size_mb:.1f} MB)')
+
+
 if __name__ == '__main__':
     print('=' * 50)
-    print('AgriSage Nuitka 打包脚本')
+    print('AgriSage 打包脚本')
     print('=' * 50)
 
     clean()
@@ -135,8 +186,20 @@ if __name__ == '__main__':
     build_frontend()
     build_backend()
     organize_output()
+    build_installer()
 
+    print()
     print('=' * 50)
-    print(f'打包完成! 发布目录: {AGRI_DIST}/')
-    print(f'运行方式: 双击 {AGRI_DIST}\\AgriSage.exe')
+    print('全部完成!')
+    print()
+    print(f'  发布目录: {AGRI_DIST}/')
+    print(f'  运行方式: 双击 {AGRI_DIST}\\AgriSage.exe')
+    print()
+
+    installer_files = os.listdir(INSTALLER_DIR) if os.path.exists(INSTALLER_DIR) else []
+    if installer_files:
+        print(f'  安装包: {INSTALLER_DIR}/')
+        for f in installer_files:
+            print(f'           - {f}')
+
     print('=' * 50)
