@@ -1,22 +1,26 @@
 """
 Nuitka 打包配置文件
 用于将 Flask 后端 + tkinter 启动器打包为 Windows exe
+使用 --standalone 模式（目录模式），避免 --onefile 的 DLL 提取问题
 """
 
 import os
 import sys
 import shutil
+import glob as glob_mod
 
 # 项目根目录
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BACKEND_DIR = os.path.join(PROJECT_ROOT, 'backend')
 FRONTEND_DIR = os.path.join(PROJECT_ROOT, 'frontend')
 DIST_DIR = os.path.join(PROJECT_ROOT, 'dist')
+AGRI_DIST = os.path.join(DIST_DIR, 'AgriSage')  # 最终发布目录名
 
 # 移除旧构建
 def clean():
-    if os.path.exists(DIST_DIR):
-        shutil.rmtree(DIST_DIR)
+    for d in [DIST_DIR]:
+        if os.path.exists(d):
+            shutil.rmtree(d)
     print('已清理 dist 目录')
 
 # 构建前端
@@ -64,7 +68,7 @@ def build_backend():
     nuitka_cmd = [
         sys.executable, '-m', 'nuitka',
         '--standalone',
-        '--onefile',
+        # 注意：去掉 --onefile，改用目录模式，避免 DLL 提取失败
         '--windows-console-mode=disable',   # tkinter GUI 不需要控制台窗口
         '--enable-plugin=tk-inter',          # 启用 tkinter 插件
         '--follow-imports',                  # 跟踪所有导入
@@ -83,43 +87,43 @@ def build_backend():
         sys.exit(1)
     print('后端打包完成')
 
-# 复制前端静态资源到 dist
-def copy_frontend_static():
-    print('复制前端静态资源...')
+# 整理输出目录：把 Nuitka 生成的 .dist 目录内容整理为 AgriSage/
+def organize_output():
+    """将 Nuitka 输出整理为最终的发布目录结构"""
+    print('正在整理输出目录...')
 
-    # 复制 dist 到 backend 目录下的正确位置
-    dist_fe = os.path.join(DIST_DIR, 'frontend')
-    os.makedirs(dist_fe, exist_ok=True)
+    # Nuitka --standalone 会生成 launcher.dist/ 目录
+    nuitka_dist = None
+    for item in os.listdir(DIST_DIR):
+        item_path = os.path.join(DIST_DIR, item)
+        if os.path.isdir(item_path) and item.endswith('.dist'):
+            nuitka_dist = item_path
+            break
 
-    src_dist = os.path.join(FRONTEND_DIR, 'dist')
-    if os.path.exists(src_dist):
-        for item in os.listdir(src_dist):
-            src = os.path.join(src_dist, item)
-            dst = os.path.join(dist_fe, item)
-            if os.path.isdir(src):
-                if os.path.exists(dst):
-                    shutil.rmtree(dst)
-                shutil.copytree(src, dst)
-            else:
-                shutil.copy2(src, dst)
+    if not nuitka_dist:
+        print(f'错误: 未找到 Nuitka 输出目录 ({DIST_DIR} 中没有 *.dist 文件夹)')
+        sys.exit(1)
 
-    # 复制 tiles
-    src_tiles = os.path.join(FRONTEND_DIR, 'public', 'tiles')
-    dst_tiles = os.path.join(DIST_DIR, 'tiles')
-    if os.path.exists(src_tiles):
-        if os.path.exists(dst_tiles):
-            shutil.rmtree(dst_tiles)
-        shutil.copytree(src_tiles, dst_tiles)
+    # 创建最终发布目录
+    if os.path.exists(AGRI_DIST):
+        shutil.rmtree(AGRI_DIST)
 
-    # 复制 uploads 目录
-    src_uploads = os.path.join(PROJECT_ROOT, 'uploads')
-    dst_uploads = os.path.join(DIST_DIR, 'uploads')
-    if os.path.exists(src_uploads):
-        if os.path.exists(dst_uploads):
-            shutil.rmtree(dst_uploads)
-        shutil.copytree(src_uploads, dst_uploads)
+    # 将 .dist 内容移动到 AgriSage/
+    shutil.copytree(nuitka_dist, AGRI_DIST)
 
-    print('前端静态资源复制完成')
+    # 删除原始的 .dist 和 .build 目录（Nuitka 构建中间产物）
+    for item in os.listdir(DIST_DIR):
+        item_path = os.path.join(DIST_DIR, item)
+        if os.path.isdir(item_path) and (item.endswith('.dist') or item.endswith('.build')):
+            shutil.rmtree(item_path)
+        elif os.path.isfile(item_path) and item.endswith('.exe') and item != 'AgriSage.exe':
+            try:
+                os.remove(item_path)
+            except Exception:
+                pass
+
+    print(f'发布目录: {AGRI_DIST}/')
+    print('输出整理完成')
 
 if __name__ == '__main__':
     print('=' * 50)
@@ -129,9 +133,10 @@ if __name__ == '__main__':
     clean()
     check_dependencies()
     build_frontend()
-    copy_frontend_static()
     build_backend()
+    organize_output()
 
     print('=' * 50)
-    print('打包完成! 输出目录: dist/AgriSage.exe')
+    print(f'打包完成! 发布目录: {AGRI_DIST}/')
+    print(f'运行方式: 双击 {AGRI_DIST}\\AgriSage.exe')
     print('=' * 50)
