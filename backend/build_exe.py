@@ -1,6 +1,6 @@
 """
 Nuitka 打包配置文件
-用于将 Flask 后端打包为 Windows exe
+用于将 Flask 后端 + tkinter 启动器打包为 Windows exe
 """
 
 import os
@@ -26,7 +26,26 @@ def build_frontend():
     os.system('npm run build')
     print('前端构建完成')
 
-# Nuitka 打包后端
+# 检查依赖
+def check_dependencies():
+    """检查打包所需的额外依赖"""
+    missing = []
+    try:
+        import nuitka  # noqa: F401
+    except ImportError:
+        missing.append('nuitka (pip install nuitka)')
+    try:
+        import psutil  # noqa: F401
+    except ImportError:
+        missing.append('psutil (pip install psutil)')
+    if missing:
+        print('缺少以下依赖:')
+        for dep in missing:
+            print(f'  - {dep}')
+        print('\n请先安装后重试')
+        sys.exit(1)
+
+# Nuitka 打包（入口为 launcher.py）
 def build_backend():
     print('正在打包后端...')
     os.chdir(BACKEND_DIR)
@@ -46,13 +65,16 @@ def build_backend():
         sys.executable, '-m', 'nuitka',
         '--standalone',
         '--onefile',
-        '--windows-console-mode=attach',
-        '--enable-console',
-        '--follow-imports',
+        '--windows-console-mode=disable',   # tkinter GUI 不需要控制台窗口
+        '--enable-plugin=tk-inter',          # 启用 tkinter 插件
+        '--follow-imports',                  # 跟踪所有导入
+        '--include-module=psutil',           # 显式包含 psutil
+        '--include-package-data=psutil',     # 包含 psutil 数据文件
+        f'--windows-icon-from-ico={os.path.join(BACKEND_DIR, "favicon.ico")}',  # 应用图标
     ] + include_data_dirs + [
         '--output-dir=../dist',
         '--output-filename=AgriSage.exe',
-        'app.py'
+        'launcher.py'                        # 入口改为 launcher.py
     ]
 
     result = os.system(' '.join(nuitka_cmd))
@@ -64,10 +86,11 @@ def build_backend():
 # 复制前端静态资源到 dist
 def copy_frontend_static():
     print('复制前端静态资源...')
+
+    # 复制 dist 到 backend 目录下的正确位置
     dist_fe = os.path.join(DIST_DIR, 'frontend')
     os.makedirs(dist_fe, exist_ok=True)
 
-    # 复制 dist 到 backend 目录下的正确位置
     src_dist = os.path.join(FRONTEND_DIR, 'dist')
     if os.path.exists(src_dist):
         for item in os.listdir(src_dist):
@@ -104,6 +127,7 @@ if __name__ == '__main__':
     print('=' * 50)
 
     clean()
+    check_dependencies()
     build_frontend()
     copy_frontend_static()
     build_backend()
