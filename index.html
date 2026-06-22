@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>桂收 · 甘蔗专用版 | 本地离线甘蔗种植管理平台</title>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="scanline"></div>
+  <div class="grid-bg"></div>
+
+  <header class="header">
+    <div class="container">
+      <a href="#" class="logo">
+        <img src="favicon.ico" alt="AgriSage 桂收">
+        <span>AGRISAGE</span>
+      </a>
+      <nav class="nav">
+        <a href="#features">功能特性</a>
+        <a href="#screenshots">界面预览</a>
+        <a href="#instructions">使用说明</a>
+        <a href="#tech">技术栈</a>
+        <a href="#" class="download-nav">立即下载</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-content reveal">
+          <div class="hero-badge">
+            <span class="pulse"></span>
+            离线优先 · 数据不出村
+          </div>
+          <h1>
+            <span class="brand">桂收</span> · 甘蔗专用版
+          </h1>
+          <p class="hero-desc">
+            面向广西甘蔗种植户、合作社与基层农技员的本地化数字农场管理系统。
+            零门槛建档、完全离线可用、地块可视化、全周期农事追踪，让甘蔗种植管理像战术指挥一样清晰高效。
+          </p>
+          <div class="hero-actions">
+            <!-- 下载链接占位：请将 href 替换为实际安装包或发布页地址 -->
+            <a href="#" class="btn btn-primary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              下载安装包
+            </a>
+            <a href="#instructions" class="btn btn-secondary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="16" x2="12" y2="12"/>
+                <line x1="12" y1="8" x2="12.01" y2="8"/>
+              </svg>
+              查看说明
+            </a>
+          </div>
+          <div class="hero-meta">
+            <div class="hero-meta-item">
+              <div class="hero-meta-label">版本</div>
+              <div class="hero-meta-value">v1.0.0</div>
+            </div>
+            <div class="hero-meta-item">
+              <div class="hero-meta-label">默认账号</div>
+              <div class="hero-meta-value">admin</div>
+            </div>
+            <div class="hero-meta-item">
+              <div class="hero-meta-label">运行环境</div>
+              <div class="hero-meta-value">Windows 10+</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal">
+          <div class="hero-frame">
+            <div class="corner corner-tl"></div>
+            <div class="corner corner-tr"></div>
+            <div class="corner corner-bl"></div>
+            <div class="corner corner-br"></div>
+            <div class="frame-bar">
+              <div class="frame-dots"><span></span><span></span><span></span></div>
+              <span>AGRISAGE_CONSOLE // HOME</span>
+            </div>
+            <img src="public/home_page.png" alt="桂收控制台首页">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section features" id="features">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-title">FEATURES // 功能特性</div>
+        <h2 class="section-heading">从地块到收获，<span>全周期数字化</span></h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="corner corner-tl"></div>
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <h3>地块数字建档</h3>
+          <p>地图打点自动绘制边界，实时计算面积（亩），记录土壤、pH、海拔、坡度等关键信息，每块地都有专属数字档案。</p>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="corner corner-tl"></div>
+          <div class="feature-icon green">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>种植周期管理</h3>
+          <p>支持新植蔗与宿根 1-3 年周期，宿根自动继承上季品种与地块信息，快速开启新一季种植档案。</p>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="corner corner-tl"></div>
+          <div class="feature-icon orange">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <h3>四大农事记录</h3>
+          <p>施肥、灌溉、病虫害、采收统一入口，按时间轴挂载到具体周期，完整追踪从种到收的每一次农事操作。</p>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="corner corner-tl"></div>
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </div>
+          <h3>地块影像时间轴</h3>
+          <p>按萌芽、分蘖、伸长期、成熟期和收获期分类上传照片，支持时间轴滑动浏览与异常点标注。</p>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="corner corner-tl"></div>
+          <div class="feature-icon green">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <h3>数据导入导出</h3>
+          <p>支持 Excel 汇总、单地块 PDF 档案、标准导入模板与 SQLite 数据库一键备份，数据迁移与上报一键完成。</p>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="corner corner-tl"></div>
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h3>预置农业字典</h3>
+          <p>内置广西主推甘蔗品种库、糖厂通讯录、气象站历史数据与土壤模板，首次安装即可直接使用，无需联网。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section screenshots" id="screenshots">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-title">SCREENSHOTS // 界面预览</div>
+        <h2 class="section-heading">每个模块，<span>单独解析</span></h2>
+      </div>
+
+      <div class="screenshot-detail-item reveal">
+        <div class="screenshot-detail-image">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+          <img src="public/plots_page.png" alt="地块管理">
+        </div>
+        <div class="screenshot-detail-content">
+          <h3>地块管理</h3>
+          <p>在卫星地图上直接打点绘制地块边界，系统自动计算并显示面积（亩）。左侧数据面板实时汇总地块数量、总面积与状态分布，支持在线/离线双模式地图切换，确保无网络环境也能正常建档。</p>
+          <ul>
+            <li>地图打点自动绘制地块边界</li>
+            <li>实时计算面积并关联土壤、pH、海拔、坡度信息</li>
+            <li>离线地图模式，数据不出村</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screenshot-detail-item reverse reveal">
+        <div class="screenshot-detail-image">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+          <img src="public/panel_page.png" alt="数据大屏">
+        </div>
+        <div class="screenshot-detail-content">
+          <h3>数据大屏</h3>
+          <p>将分散的地块数据、农事记录与产量信息整合为一块战术级驾驶舱。通过饼图、折线图与滚动列表，管理者可在登录后第一时间掌握全局态势，发现异常及时处理。</p>
+          <ul>
+            <li>地块概况与种植面积总览</li>
+            <li>品种分布、产量趋势可视化</li>
+            <li>近期农事与预警信息实时滚动</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screenshot-detail-item reveal">
+        <div class="screenshot-detail-image">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+          <img src="public/farming_page.png" alt="农事记录">
+        </div>
+        <div class="screenshot-detail-content">
+          <h3>农事记录</h3>
+          <p>施肥、灌溉、病虫害防治、采收四大农事统一入口。每一条记录都精确挂载到具体地块与种植周期，支持按类型、日期、地块多维度筛选，形成从种到收的完整时间轴。</p>
+          <ul>
+            <li>四大农事类型统一登记</li>
+            <li>按地块、周期、日期快速检索</li>
+            <li>自动生成农事时间轴档案</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screenshot-detail-item reverse reveal">
+        <div class="screenshot-detail-image">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+          <img src="public/export_page.png" alt="数据导入导出">
+        </div>
+        <div class="screenshot-detail-content">
+          <h3>数据导入导出</h3>
+          <p>提供多种数据交换方式，既能向上级部门上报 Excel 汇总，也能为单个地块生成 PDF 档案，还能通过标准模板批量导入历史数据，SQLite 数据库一键备份让数据迁移更安心。</p>
+          <ul>
+            <li>Excel 汇总与单地块 PDF 档案</li>
+            <li>标准导入模板，批量迁移历史数据</li>
+            <li>SQLite 数据库一键备份与恢复</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screenshot-detail-item reveal">
+        <div class="screenshot-detail-image">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+          <img src="public/dictionary_varieties.png" alt="品种图鉴">
+        </div>
+        <div class="screenshot-detail-content">
+          <h3>品种图鉴</h3>
+          <p>内置广西主推甘蔗品种库，包括桂糖、柳城、新台糖等系列。每个品种都配有产量、糖分、抗逆性等关键参数，帮助种植户科学选种，减少试错成本。</p>
+          <ul>
+            <li>预置广西主推甘蔗品种</li>
+            <li>产量、糖分、抗逆性参数对比</li>
+            <li>品种图片与详细特征说明</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screenshot-detail-item reverse reveal">
+        <div class="screenshot-detail-image">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+          <img src="public/dictionary_factories.png" alt="糖厂通讯录">
+        </div>
+        <div class="screenshot-detail-content">
+          <h3>糖厂通讯录</h3>
+          <p>按地市整理糖厂服务范围、地址与联系电话，支持一键拨号。砍收季快速对接糖厂，掌握收蔗安排，减少中间环节的信息滞后。</p>
+          <ul>
+            <li>按地市查看糖厂服务范围</li>
+            <li>联系电话一键拨号</li>
+            <li>收蔗信息与地址快速查询</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screenshot-detail-item reveal">
+        <div class="screenshot-detail-image">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+          <img src="public/dictionary_weather.png" alt="气象数据">
+        </div>
+        <div class="screenshot-detail-content">
+          <h3>气象数据</h3>
+          <p>接入实时气象、未来天气预报与灾害预警信息，辅助灌溉、施肥、防灾等农事决策。提前获知霜冻、干旱、暴雨等风险，降低气象灾害带来的损失。</p>
+          <ul>
+            <li>实时气象与未来预报</li>
+            <li>灾害预警主动提醒</li>
+            <li>辅助灌溉、施肥与防灾决策</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screenshot-detail-item reverse reveal">
+        <div class="screenshot-detail-image">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+          <img src="public/home_page.png" alt="控制台首页">
+        </div>
+        <div class="screenshot-detail-content">
+          <h3>控制台首页</h3>
+          <p>登录后首先进入的指挥中枢。系统运行状态、快捷功能入口、地块分布总览与关键指标卡片集中呈现，让管理者一眼掌握农场全局。</p>
+          <ul>
+            <li>系统状态与快捷入口</li>
+            <li>地块分布总览</li>
+            <li>关键指标卡片，登录即见全局</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section instructions" id="instructions">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-title">GET STARTED // 使用说明</div>
+        <h2 class="section-heading">安装即用，<span>一键启动</span></h2>
+      </div>
+
+      <div class="instruction-item reveal">
+        <div class="instruction-image">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+          <img src="public/installer.png" alt="桂收安装程序">
+        </div>
+        <div class="instruction-content">
+          <span class="instruction-step">01</span>
+          <h3>运行安装程序</h3>
+          <p>下载安装包后双击运行 AgriSage-Setup-1.0.0.exe，按向导提示完成安装。安装程序会自动部署运行时依赖、前端资源与后端服务，无需手动配置 Python 或 Node 环境。</p>
+          <ul>
+            <li>支持 Windows 10 / Windows 11（64 位）</li>
+            <li>默认安装路径：C:\Program Files\桂收·甘蔗专用版</li>
+            <li>可选择是否创建桌面快捷方式</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="instruction-item reverse reveal">
+        <div class="instruction-image">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+          <img src="public/launcher.png" alt="桂收启动器">
+        </div>
+        <div class="instruction-content">
+          <span class="instruction-step">02</span>
+          <h3>点击启动服务</h3>
+          <p>安装完成后，打开桌面快捷方式运行「桂收·甘蔗专用版」启动器。在 AgriSage Cane Service Manager 中点击绿色的「启动服务」按钮，等待服务状态变为运行中。</p>
+          <ul>
+            <li>启动器自动管理后端服务与数据库</li>
+            <li>服务启动后访问地址：http://localhost:5000</li>
+            <li>可随时停止、重启或打开浏览器访问</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="instruction-item reveal">
+        <div class="instruction-image">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+          <img src="public/browser.png" alt="浏览器访问控制台">
+        </div>
+        <div class="instruction-content">
+          <span class="instruction-step">03</span>
+          <h3>打开浏览器访问</h3>
+          <p>服务启动后，点击启动器中的「打开浏览器访问」，或手动在浏览器地址栏输入 http://localhost:5000。使用默认管理员账号登录，即可进入控制台首页，开始管理地块、记录农事与查看数据大屏。</p>
+          <code>账号：admin<br>密码：admin123</code>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="tech">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-title">TECH STACK // 技术栈</div>
+        <h2 class="section-heading">轻量稳定，<span>离线优先</span></h2>
+      </div>
+      <div class="tech-grid">
+        <div class="tech-card reveal">
+          <img src="public/icons/flask.svg" alt="Flask" class="tech-icon">
+          <div>
+            <h4>Flask 3.0</h4>
+            <p>Python 轻量级后端框架，RESTful API 服务。</p>
+          </div>
+        </div>
+        <div class="tech-card reveal">
+          <img src="public/icons/vue.svg" alt="Vue.js" class="tech-icon">
+          <div>
+            <h4>Vue 3 + Vite 5</h4>
+            <p>渐进式前端框架，极速开发与热更新体验。</p>
+          </div>
+        </div>
+        <div class="tech-card reveal">
+          <img src="public/icons/sqlite.svg" alt="SQLite" class="tech-icon">
+          <div>
+            <h4>SQLite</h4>
+            <p>单文件嵌入式数据库，零配置、易备份、完全离线。</p>
+          </div>
+        </div>
+        <div class="tech-card reveal">
+          <img src="public/icons/element-plus.svg" alt="Element Plus" class="tech-icon">
+          <div>
+            <h4>Element Plus 2.5</h4>
+            <p>Vue 3 桌面端组件库，提供完整表单与表格能力。</p>
+          </div>
+        </div>
+        <div class="tech-card reveal">
+          <svg class="tech-icon inline-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          <div>
+            <h4>Leaflet 1.9</h4>
+            <p>开源地图引擎，支持在线/离线双模式地块绘制。</p>
+          </div>
+        </div>
+        <div class="tech-card reveal">
+          <img src="public/icons/echarts.png" alt="Apache ECharts" class="tech-icon">
+          <div>
+            <h4>ECharts 5.5</h4>
+            <p>数据可视化图表库，用于仪表盘统计与趋势分析。</p>
+          </div>
+        </div>
+        <div class="tech-card reveal">
+          <img src="public/icons/python.svg" alt="Python" class="tech-icon">
+          <div>
+            <h4>openpyxl + reportlab</h4>
+            <p>Excel 与 PDF 导出，满足数据上报与档案打印需求。</p>
+          </div>
+        </div>
+        <div class="tech-card reveal">
+          <svg class="tech-icon inline-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="8" rx="2" ry="2"/>
+            <rect x="2" y="13" width="20" height="8" rx="2" ry="2"/>
+            <line x1="6" y1="7" x2="6.01" y2="7"/>
+            <line x1="6" y1="17" x2="6.01" y2="17"/>
+          </svg>
+          <div>
+            <h4>waitress 3.0</h4>
+            <p>跨平台生产级 WSGI 服务器，稳定运行无需复杂配置。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="#features">功能特性</a>
+        <a href="#screenshots">界面预览</a>
+        <a href="#instructions">使用说明</a>
+      </div>
+      <p>© 2024-2026 桂收 · 甘蔗专用版 AgriSage Cane. 本地离线 · 数据不出村.</p>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
