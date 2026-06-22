@@ -11,8 +11,14 @@ import webbrowser
 import psutil
 
 # 确保项目路径正确
-if getattr(sys, 'frozen', False):
-    # Nuitka 打包后的路径：exe 所在目录即为 BASE_DIR
+# Nuitka 4.x 不设 sys.frozen 也不设 __compiled__，但编译后 __file__ 指向的文件不存在
+_is_frozen = (
+    getattr(sys, 'frozen', False)
+    or '__compiled__' in dir(__builtins__)
+    or not os.path.isfile(__file__)
+)
+if _is_frozen:
+    # Nuitka/PyInstaller 打包后的路径：exe 所在目录即为 BASE_DIR
     BASE_DIR = os.path.dirname(sys.executable)
 else:
     # 开发环境：launcher.py 位于 backend/，BASE_DIR 为项目根目录
@@ -200,8 +206,10 @@ class AgriSageLauncher:
 
     def _run_flask_server(self):
         """在后台线程中启动 Flask waitress 服务器"""
+        os.environ['AGRISAGE_HOME'] = BASE_DIR
+
         # 确保 backend 目录在 sys.path 中
-        if getattr(sys, 'frozen', False):
+        if _is_frozen:
             # 打包模式：app 模块已被 Nuitka 编译进 exe，直接导入
             pass
         else:
@@ -213,7 +221,12 @@ class AgriSageLauncher:
         from app import create_app  # type: ignore[import-not-found]
         from waitress import serve
 
-        app = create_app()
+        with open(os.path.join(BASE_DIR, 'agrisage_startup.log'), 'w', encoding='utf-8') as log:
+            log.write(f'launcher BASE_DIR = {BASE_DIR}\n')
+            log.write(f'sys.executable = {sys.executable}\n')
+            log.write(f'sys.frozen = {getattr(sys, "frozen", None)}\n')
+
+        app = create_app(project_root=BASE_DIR)
         print(f'桂收 · 甘蔗专用版 服务启动中...')
         print(f'访问地址: http://localhost:{PORT}')
         print(f'按「停止服务」按钮停止服务')

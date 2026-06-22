@@ -1,6 +1,12 @@
 import os
+import sys
 
-BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+if 'AGRISAGE_HOME' in os.environ:
+    BASE_DIR = os.environ['AGRISAGE_HOME']
+elif getattr(sys, 'frozen', False) or '__compiled__' in dir(__builtins__) or not os.path.isfile(__file__):
+    BASE_DIR = os.path.dirname(sys.executable)
+else:
+    BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 UPLOAD_DIR = os.path.join(BASE_DIR, 'uploads')
 

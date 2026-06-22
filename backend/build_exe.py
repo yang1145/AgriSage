@@ -21,8 +21,12 @@ INSTALLER_DIR = os.path.join(PROJECT_ROOT, 'installer')  # 安装包输出目录
 def clean():
     for d in [DIST_DIR]:
         if os.path.exists(d):
-            shutil.rmtree(d)
-    print('已清理 dist 目录')
+            try:
+                shutil.rmtree(d)
+                print('已清理 dist 目录')
+            except PermissionError:
+                print(f'警告: 无法删除 {d}（文件被占用，请关闭 AgriSage.exe 后重试）')
+                sys.exit(1)
 
 # 构建前端
 def build_frontend():
@@ -177,16 +181,48 @@ def build_installer():
 
 
 if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description='AgriSage Nuitka 打包脚本',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog='''
+示例:
+  python build_exe.py                       # 完整构建（前端 + 后端）
+  python build_exe.py --no-clean            # 增量构建，不清理 dist
+  python build_exe.py --skip-frontend       # 跳过前端构建，仅打包后端
+  python build_exe.py -sf -i                # 跳过前端 + 生成安装包
+  python build_exe.py --installer           # 仅在后端打包后生成安装包
+        ''')
+    parser.add_argument('--skip-frontend', '-sf', dest='skip_frontend',
+                        action='store_true', help='跳过前端构建（使用已有的 frontend/dist/）')
+    parser.add_argument('--installer', '-i', dest='build_installer_flag',
+                        action='store_true', help='同时生成 Inno Setup 安装包')
+    parser.add_argument('--no-clean', '-nc', dest='no_clean',
+                        action='store_true', help='不清理 dist 目录（增量构建）')
+    args = parser.parse_args()
+
     print('=' * 50)
     print('AgriSage 打包脚本')
     print('=' * 50)
 
-    clean()
+    if not args.no_clean:
+        clean()
+    else:
+        print('跳过清理 dist 目录')
+
     check_dependencies()
-    build_frontend()
+
+    if not args.skip_frontend:
+        build_frontend()
+    else:
+        print('跳过前端构建')
+
     build_backend()
     organize_output()
-    build_installer()
+
+    if args.build_installer_flag:
+        build_installer()
 
     print()
     print('=' * 50)

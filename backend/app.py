@@ -1,10 +1,19 @@
 import os
+import sys
 from flask import Flask, send_from_directory, abort
 from config import Config, DATA_DIR, UPLOAD_DIR
 from extensions import db, cors
 
 
-def create_app():
+def create_app(project_root=None):
+    if project_root is None:
+        if 'AGRISAGE_HOME' in os.environ:
+            project_root = os.environ['AGRISAGE_HOME']
+        elif getattr(sys, 'frozen', False) or '__compiled__' in dir(__builtins__) or not os.path.isfile(__file__):
+            project_root = os.path.dirname(sys.executable)
+        else:
+            project_root = os.path.dirname(os.path.dirname(__file__))
+
     app = Flask(__name__)
     app.config.from_object(Config)
 
@@ -25,8 +34,15 @@ def create_app():
         from models import User, Plot, PlantingCycle, FertilizationRecord, IrrigationRecord, PestDiseaseRecord, HarvestRecord, PlotImage, Variety, SugarFactory, WeatherStation, SoilTemplate  # noqa: F401
         db.create_all()
 
+        if User.query.count() == 0:
+            admin = User(name='admin', role='owner', phone='13800000000')
+            admin.set_password('admin123')
+            db.session.add(admin)
+            db.session.commit()
+
     # 离线地图瓦片服务
-    tiles_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend', 'public', 'tiles')
+    _is_frozen = getattr(sys, 'frozen', False) or '__compiled__' in dir(__builtins__) or not os.path.isfile(__file__)
+    tiles_dir = os.path.join(project_root, 'tiles') if _is_frozen else os.path.join(project_root, 'frontend', 'public', 'tiles')
 
     @app.route('/tiles/<int:z>/<int:x>/<int:y>.png')
     def serve_tile(z, x, y):
@@ -36,7 +52,15 @@ def create_app():
         abort(404)
 
     # Serve frontend static files in production mode
-    frontend_dist = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend', 'dist')
+    frontend_dist = os.path.join(project_root, 'frontend', 'dist')
+
+    with open(os.path.join(project_root, 'agrisage_startup.log'), 'a', encoding='utf-8') as log:
+        log.write(f'project_root = {project_root}\n')
+        log.write(f'frontend_dist = {frontend_dist}\n')
+        log.write(f'frontend_dist exists = {os.path.isdir(frontend_dist)}\n')
+        if os.path.isdir(frontend_dist):
+            log.write(f'frontend_dist contents = {os.listdir(frontend_dist)}\n')
+
     if os.path.isdir(frontend_dist):
 
         @app.route('/', defaults={'path': ''})
