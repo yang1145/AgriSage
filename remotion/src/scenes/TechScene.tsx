@@ -11,8 +11,8 @@ import {
 
 /*
   场景5：技术栈
-  42 ~ 52秒 (1260 ~ 1560帧)
-  视觉：深色背景，前端/后端双栏架构图，底部关键数据。
+  68 ~ 88秒 (2040 ~ 2640帧)
+  视觉：浅色背景，前后端两栏技术清单，底部关键数据。
 */
 
 const FRONTEND_TECH = [
@@ -38,7 +38,7 @@ export const TechScene: React.FC = () => {
   const titleOpacity = interpolate(frame, [0, 0.7 * fps], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const titleY = interpolate(frame, [0, 0.8 * fps], [20, 0], {
+  const titleY = interpolate(frame, [0, 0.8 * fps], [24, 0], {
     extrapolateRight: "clamp",
   });
 
@@ -56,25 +56,40 @@ export const TechScene: React.FC = () => {
       <div
         key={i}
         style={{
-          padding: "14px 20px",
-          borderRadius: 12,
-          backgroundColor: "rgba(59,130,246,0.06)",
-          border: "1px solid rgba(59,130,246,0.12)",
+          padding: "18px 24px",
+          borderRadius: 2,
+          backgroundColor: "#fffdf7",
+          border: "1px solid #d9d4c9",
+          boxShadow: "2px 2px 0 #d9d4c9",
           transform: `translateX(${x}px)`,
           opacity,
+          display: "flex",
+          alignItems: "center",
+          gap: 16,
         }}
       >
         <div
           style={{
-            fontSize: 17,
-            fontWeight: 700,
-            color: "#f0fdf4",
-            marginBottom: 3,
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            backgroundColor: "#4a6fa5",
+            flexShrink: 0,
           }}
-        >
-          {tech.name}
+        />
+        <div>
+          <div
+            style={{
+              fontSize: 22,
+              fontWeight: 900,
+              color: "#1c1917",
+              marginBottom: 3,
+            }}
+          >
+            {tech.name}
+          </div>
+          <div style={{ fontSize: 17, color: "#5c564a" }}>{tech.note}</div>
         </div>
-        <div style={{ fontSize: 14, color: "#86a88e" }}>{tech.note}</div>
       </div>
     );
   });
@@ -93,25 +108,40 @@ export const TechScene: React.FC = () => {
       <div
         key={i}
         style={{
-          padding: "14px 20px",
-          borderRadius: 12,
-          backgroundColor: "rgba(34,197,94,0.06)",
-          border: "1px solid rgba(34,197,94,0.12)",
+          padding: "18px 24px",
+          borderRadius: 2,
+          backgroundColor: "#fffdf7",
+          border: "1px solid #d9d4c9",
+          boxShadow: "2px 2px 0 #d9d4c9",
           transform: `translateX(${x}px)`,
           opacity,
+          display: "flex",
+          alignItems: "center",
+          gap: 16,
         }}
       >
         <div
           style={{
-            fontSize: 17,
-            fontWeight: 700,
-            color: "#f0fdf4",
-            marginBottom: 3,
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            backgroundColor: "#3d7a3a",
+            flexShrink: 0,
           }}
-        >
-          {tech.name}
+        />
+        <div>
+          <div
+            style={{
+              fontSize: 22,
+              fontWeight: 900,
+              color: "#1c1917",
+              marginBottom: 3,
+            }}
+          >
+            {tech.name}
+          </div>
+          <div style={{ fontSize: 17, color: "#5c564a" }}>{tech.note}</div>
         </div>
-        <div style={{ fontSize: 14, color: "#86a88e" }}>{tech.note}</div>
       </div>
     );
   });
@@ -150,28 +180,28 @@ export const TechScene: React.FC = () => {
       >
         <div
           style={{
-            fontSize: 30,
+            fontSize: 40,
             fontWeight: 900,
-            color: "#f0fdf4",
+            color: "#1c1917",
           }}
         >
           {stat.value}
         </div>
         <div
           style={{
-            fontSize: 15,
-            color: "#22c55e",
-            fontWeight: 700,
-            marginTop: 4,
+            fontSize: 18,
+            color: "#2d5a27",
+            fontWeight: 900,
+            marginTop: 6,
           }}
         >
           {stat.label}
         </div>
         <div
           style={{
-            fontSize: 13,
-            color: "#5c7c66",
-            marginTop: 2,
+            fontSize: 15,
+            color: "#8c7f6b",
+            marginTop: 3,
           }}
         >
           {stat.sub}
@@ -183,7 +213,7 @@ export const TechScene: React.FC = () => {
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#0c1510",
+        backgroundColor: "#f4f1ea",
         fontFamily: "'Noto Sans SC', sans-serif",
       }}
     >
@@ -191,8 +221,9 @@ export const TechScene: React.FC = () => {
         style={{
           position: "absolute",
           inset: 0,
+          opacity: 0.25,
           backgroundImage:
-            "radial-gradient(circle at 80% 20%, rgba(59,130,246,0.04) 0%, transparent 40%)",
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")",
         }}
       />
 
@@ -200,31 +231,31 @@ export const TechScene: React.FC = () => {
         style={{
           display: "flex",
           flexDirection: "column",
-          padding: "48px 100px 40px",
+          padding: "52px 100px 44px",
         }}
       >
         <div
           style={{
             textAlign: "center",
-            marginBottom: 40,
+            marginBottom: 44,
             transform: `translateY(${titleY}px)`,
             opacity: titleOpacity,
           }}
         >
           <div
             style={{
-              fontSize: 44,
+              fontSize: 56,
               fontWeight: 900,
-              color: "#f0fdf4",
+              color: "#1c1917",
             }}
           >
             技术选型：轻量、稳定、够用就好
           </div>
           <div
             style={{
-              fontSize: 17,
-              color: "#86a88e",
-              marginTop: 8,
+              fontSize: 24,
+              color: "#5c564a",
+              marginTop: 10,
             }}
           >
             不追求最新最潮，只选最适合广西农村实际环境的方案
@@ -235,9 +266,9 @@ export const TechScene: React.FC = () => {
           style={{
             flex: 1,
             display: "flex",
-            gap: 0,
+            gap: 60,
             alignItems: "stretch",
-            maxWidth: 1100,
+            maxWidth: 1200,
             margin: "0 auto",
             width: "100%",
           }}
@@ -247,18 +278,19 @@ export const TechScene: React.FC = () => {
               flex: 1,
               display: "flex",
               flexDirection: "column",
-              gap: 12,
-              paddingRight: 24,
+              gap: 14,
             }}
           >
             <div
               style={{
-                fontSize: 15,
-                color: "#3b82f6",
-                fontWeight: 700,
+                fontSize: 20,
+                color: "#4a6fa5",
+                fontWeight: 900,
                 letterSpacing: 2,
                 marginBottom: 8,
                 textAlign: "center",
+                paddingBottom: 12,
+                borderBottom: "2px solid #d9d4c9",
               }}
             >
               前端 Vue 3 + Vite
@@ -268,7 +300,7 @@ export const TechScene: React.FC = () => {
 
           <div
             style={{
-              width: 80,
+              width: 60,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -280,35 +312,17 @@ export const TechScene: React.FC = () => {
               style={{
                 width: 2,
                 height: 180,
-                background:
-                  "linear-gradient(to bottom, rgba(59,130,246,0.6), rgba(34,197,94,0.6))",
+                backgroundColor: "#d9d4c9",
                 borderRadius: 1,
-                position: "relative",
               }}
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  top: `${interpolate(
-                    Math.sin((frame / fps) * 3),
-                    [-1, 1],
-                    [20, 160]
-                  )}px`,
-                  left: -4,
-                  width: 10,
-                  height: 10,
-                  borderRadius: "50%",
-                  backgroundColor: "#f0fdf4",
-                  boxShadow: "0 0 10px rgba(255,255,255,0.4)",
-                }}
-              />
-            </div>
+            />
             <span
               style={{
-                fontSize: 12,
-                color: "#5c7c66",
-                marginTop: 10,
+                fontSize: 14,
+                color: "#8c7f6b",
+                marginTop: 12,
                 writingMode: "vertical-rl",
+                fontWeight: 900,
               }}
             >
               REST API
@@ -320,18 +334,19 @@ export const TechScene: React.FC = () => {
               flex: 1,
               display: "flex",
               flexDirection: "column",
-              gap: 12,
-              paddingLeft: 24,
+              gap: 14,
             }}
           >
             <div
               style={{
-                fontSize: 15,
-                color: "#22c55e",
-                fontWeight: 700,
+                fontSize: 20,
+                color: "#3d7a3a",
+                fontWeight: 900,
                 letterSpacing: 2,
                 marginBottom: 8,
                 textAlign: "center",
+                paddingBottom: 12,
+                borderBottom: "2px solid #d9d4c9",
               }}
             >
               后端 Flask + SQLite
@@ -344,10 +359,10 @@ export const TechScene: React.FC = () => {
           style={{
             display: "flex",
             justifyContent: "center",
-            gap: 100,
-            marginTop: 40,
-            paddingTop: 28,
-            borderTop: "1px solid rgba(255,255,255,0.06)",
+            gap: 120,
+            marginTop: 44,
+            paddingTop: 32,
+            borderTop: "2px solid #d9d4c9",
           }}
         >
           {statElements}

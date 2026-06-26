@@ -11,8 +11,8 @@ import {
 
 /*
   场景6：结尾
-  52 ~ 60秒 (1560 ~ 1800帧)
-  视觉：深色背景，左侧干净记事本呼应开场，右侧品牌收尾。
+  88 ~ 103秒 (2640 ~ 3090帧)
+  视觉：浅色背景，左侧干净记事本呼应开场，右侧品牌收尾。
 */
 
 const CLEAN_LINES = [
@@ -59,14 +59,14 @@ export const OutroScene: React.FC = () => {
   const lineWidth = interpolate(
     frame,
     [3.8 * fps, 5 * fps],
-    [0, 140],
+    [0, 180],
     { extrapolateRight: "clamp" }
   );
 
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#0c1510",
+        backgroundColor: "#f4f1ea",
         fontFamily: "'Noto Sans SC', sans-serif",
       }}
     >
@@ -74,8 +74,9 @@ export const OutroScene: React.FC = () => {
         style={{
           position: "absolute",
           inset: 0,
+          opacity: 0.25,
           backgroundImage:
-            "radial-gradient(circle at 70% 50%, rgba(34,197,94,0.06) 0%, transparent 45%)",
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")",
         }}
       />
 
@@ -84,7 +85,7 @@ export const OutroScene: React.FC = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: 80,
+          gap: 90,
           padding: 100,
         }}
       >
@@ -93,24 +94,50 @@ export const OutroScene: React.FC = () => {
           style={{
             transform: `translateY(${notebookY}px)`,
             opacity: notebookOpacity,
-            backgroundColor: "#fffef9",
-            borderRadius: 8,
-            boxShadow: "0 12px 40px rgba(0,0,0,0.25)",
-            padding: "40px 48px",
-            width: 440,
-            border: "1px solid rgba(0,0,0,0.05)",
-            backgroundImage:
-              "repeating-linear-gradient(transparent, transparent 35px, #e8e0d4 35px, #e8e0d4 36px)",
+            backgroundColor: "#fffdf7",
+            borderRadius: 4,
+            padding: "48px 56px 48px 84px",
+            width: 500,
+            border: "1px solid #d9d4c9",
+            boxShadow: "4px 4px 0 #d9d4c9",
             flexShrink: 0,
+            position: "relative",
           }}
         >
+          {/* 线圈装订 */}
           <div
             style={{
-              fontSize: 14,
-              color: "#9ca3af",
-              marginBottom: 18,
-              paddingBottom: 10,
-              borderBottom: "1px dashed #d1ccc0",
+              position: "absolute",
+              left: 18,
+              top: 40,
+              bottom: 40,
+              width: 30,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  width: 14,
+                  height: 14,
+                  borderRadius: "50%",
+                  backgroundColor: "#c4c0b5",
+                  border: "1px solid #a8a49a",
+                }}
+              />
+            ))}
+          </div>
+
+          <div
+            style={{
+              fontSize: 16,
+              color: "#8c7f6b",
+              marginBottom: 22,
+              paddingBottom: 12,
+              borderBottom: "1px dashed #d9d4c9",
             }}
           >
             2024年3月 · 东岭地块档案
@@ -129,11 +156,11 @@ export const OutroScene: React.FC = () => {
                 key={i}
                 style={{
                   opacity: lineOpacity,
-                  fontSize: line.highlight ? 20 : 18,
-                  color: line.highlight ? "#16a34a" : "#374151",
+                  fontSize: line.highlight ? 22 : 20,
+                  color: line.highlight ? "#2d5a27" : "#3d3a34",
                   fontFamily: "'Courier New', monospace",
-                  lineHeight: 1.9,
-                  fontWeight: line.highlight ? 700 : 400,
+                  lineHeight: 1.95,
+                  fontWeight: line.highlight ? 900 : 500,
                 }}
               >
                 {line.text}
@@ -143,21 +170,21 @@ export const OutroScene: React.FC = () => {
 
           <div
             style={{
-              marginTop: 18,
-              paddingTop: 12,
-              borderTop: "1px dashed #bbf7d0",
+              marginTop: 22,
+              paddingTop: 14,
+              borderTop: "1px dashed #a8c9a0",
               opacity: endingOpacity,
               display: "flex",
               alignItems: "center",
               gap: 8,
             }}
           >
-            <span style={{ fontSize: 18, color: "#16a34a", fontWeight: 900 }}>✓</span>
+            <span style={{ fontSize: 20, color: "#2d5a27", fontWeight: 900 }}>✓</span>
             <span
               style={{
-                fontSize: 15,
-                color: "#16a34a",
-                fontWeight: 600,
+                fontSize: 18,
+                color: "#2d5a27",
+                fontWeight: 900,
               }}
             >
               清清楚楚，明明白白
@@ -169,16 +196,16 @@ export const OutroScene: React.FC = () => {
         <div
           style={{
             opacity: brandOpacity,
-            width: 420,
+            width: 480,
           }}
         >
           <div
             style={{
-              fontSize: 60,
+              fontSize: 100,
               fontWeight: 900,
-              color: "#f0fdf4",
-              letterSpacing: 6,
-              marginBottom: 8,
+              color: "#2d5a27",
+              letterSpacing: 8,
+              marginBottom: 10,
             }}
           >
             桂收
@@ -187,20 +214,20 @@ export const OutroScene: React.FC = () => {
           <div
             style={{
               width: lineWidth,
-              height: 3,
+              height: 4,
               borderRadius: 2,
-              backgroundColor: "#22c55e",
-              marginBottom: 20,
+              backgroundColor: "#2d5a27",
+              marginBottom: 24,
             }}
           />
 
           <div
             style={{
-              fontSize: 20,
-              color: "#22c55e",
-              fontWeight: 700,
-              letterSpacing: 3,
-              marginBottom: 24,
+              fontSize: 26,
+              color: "#8c6239",
+              fontWeight: 900,
+              letterSpacing: 4,
+              marginBottom: 28,
             }}
           >
             AGRISAGE CANE
@@ -208,9 +235,9 @@ export const OutroScene: React.FC = () => {
 
           <div
             style={{
-              fontSize: 17,
-              color: "#86a88e",
-              lineHeight: 1.9,
+              fontSize: 22,
+              color: "#5c564a",
+              lineHeight: 2,
               opacity: endingOpacity,
             }}
           >
@@ -219,7 +246,7 @@ export const OutroScene: React.FC = () => {
             记录的事情交给我们
             <br />
             <br />
-            <span style={{ color: "#f0fdf4", fontWeight: 600 }}>
+            <span style={{ color: "#1c1917", fontWeight: 900 }}>
               离线、免费、数据在你自己手里
             </span>
           </div>
@@ -230,7 +257,7 @@ export const OutroScene: React.FC = () => {
       <div
         style={{
           position: "absolute",
-          bottom: 32,
+          bottom: 36,
           left: 0,
           right: 0,
           textAlign: "center",
@@ -239,8 +266,8 @@ export const OutroScene: React.FC = () => {
       >
         <div
           style={{
-            fontSize: 13,
-            color: "#5c7c66",
+            fontSize: 15,
+            color: "#8c7f6b",
           }}
         >
           © 2024-2026 桂收·甘蔗专用版 AgriSage Cane · 本地离线 · 数据不出村

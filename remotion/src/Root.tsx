@@ -7,7 +7,7 @@ export const RemotionRoot = () => {
       <Composition
         id="IntroVideo"
         component={IntroVideo}
-        durationInFrames={103 * 30} // 103秒 @ 30fps (匹配配音音频)
+        durationInFrames={115.5 * 30} // 115.5秒 @ 30fps（含转场静音缓冲）
         fps={30}
         width={1920}
         height={1080}

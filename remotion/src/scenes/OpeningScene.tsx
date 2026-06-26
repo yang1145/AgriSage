@@ -11,8 +11,8 @@ import {
 
 /*
   场景1：开场
-  0 ~ 8秒 (0 ~ 240帧)
-  视觉：深色背景上，一张手写混乱的记事本从左入场，随后平移到左侧，
+  0 ~ 12秒 (0 ~ 360帧)
+  视觉：浅色纸质背景，一本真实手写笔记入场，随后移向左侧，
         右侧浮现品牌信息。
 */
 
@@ -27,27 +27,20 @@ export const OpeningScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // 整体淡入
-  const sceneOpacity = interpolate(frame, [0, 0.5 * fps], [0, 1], {
-    extrapolateRight: "clamp",
-  });
-
-  // 记事本入场
   const notebookProgress = spring({
     frame: frame - 0.2 * fps,
     fps,
     config: { damping: 18, stiffness: 60 },
   });
   const notebookOpacity = interpolate(notebookProgress, [0, 1], [0, 1]);
-  const notebookRotate = interpolate(notebookProgress, [0, 1], [-3, 0]);
+  const notebookRotate = interpolate(notebookProgress, [0, 1], [-4, -1]);
   const notebookX = interpolate(
     frame,
     [6 * fps, 7.5 * fps],
-    [0, -320],
+    [0, -360],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
   );
 
-  // 高亮标记
   const problemHighlight = interpolate(
     frame,
     [4.5 * fps, 5.5 * fps],
@@ -55,7 +48,6 @@ export const OpeningScene: React.FC = () => {
     { extrapolateRight: "clamp" }
   );
 
-  // 右侧品牌信息
   const brandProgress = spring({
     frame: frame - 6.2 * fps,
     fps,
@@ -64,7 +56,6 @@ export const OpeningScene: React.FC = () => {
   const brandX = interpolate(brandProgress, [0, 1], [80, 0]);
   const brandOpacity = interpolate(brandProgress, [0, 1], [0, 1]);
 
-  // 品牌名逐字
   const brandChars = "桂收".split("");
   const brandCharElements = brandChars.map((char, i) => {
     const charProgress = spring({
@@ -72,7 +63,7 @@ export const OpeningScene: React.FC = () => {
       fps,
       config: { damping: 12, stiffness: 160 },
     });
-    const charY = interpolate(charProgress, [0, 1], [24, 0]);
+    const charY = interpolate(charProgress, [0, 1], [30, 0]);
     const charOpacity = interpolate(charProgress, [0, 1], [0, 1]);
 
     return (
@@ -82,10 +73,10 @@ export const OpeningScene: React.FC = () => {
           display: "inline-block",
           transform: `translateY(${charY}px)`,
           opacity: charOpacity,
-          fontSize: 72,
+          fontSize: 120,
           fontWeight: 900,
-          color: "#f0fdf4",
-          letterSpacing: 8,
+          color: "#2d5a27",
+          letterSpacing: 10,
         }}
       >
         {char}
@@ -96,18 +87,18 @@ export const OpeningScene: React.FC = () => {
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#0c1510",
+        backgroundColor: "#f4f1ea",
         fontFamily: "'Noto Sans SC', sans-serif",
-        opacity: sceneOpacity,
       }}
     >
-      {/* 柔光背景 */}
+      {/* 纸张纹理 */}
       <div
         style={{
           position: "absolute",
           inset: 0,
+          opacity: 0.25,
           backgroundImage:
-            "radial-gradient(circle at 30% 50%, rgba(34,197,94,0.06) 0%, transparent 45%)",
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")",
         }}
       />
 
@@ -124,39 +115,63 @@ export const OpeningScene: React.FC = () => {
           style={{
             transform: `rotate(${notebookRotate}deg) translateX(${notebookX}px)`,
             opacity: notebookOpacity,
-            backgroundColor: "#fffef9",
-            borderRadius: 8,
-            boxShadow:
-              "0 12px 40px rgba(0,0,0,0.25), inset 0 0 60px rgba(0,0,0,0.02)",
-            padding: "44px 52px",
-            width: 480,
-            border: "1px solid rgba(0,0,0,0.06)",
-            backgroundImage:
-              "repeating-linear-gradient(transparent, transparent 35px, #e8e0d4 35px, #e8e0d4 36px)",
+            backgroundColor: "#fffdf7",
+            borderRadius: 4,
+            padding: "52px 60px",
+            width: 560,
+            border: "1px solid #d9d4c9",
+            boxShadow: "4px 4px 0 #d9d4c9",
             flexShrink: 0,
           }}
         >
-          {/* 高亮标记 */}
+          {/* 线圈装订效果 */}
           <div
             style={{
               position: "absolute",
-              top: 188,
-              left: 36,
-              right: 36,
-              height: 32,
-              backgroundColor: `rgba(234,88,12,${problemHighlight * 0.12})`,
+              left: 16,
+              top: 40,
+              bottom: 40,
+              width: 30,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  width: 14,
+                  height: 14,
+                  borderRadius: "50%",
+                  backgroundColor: "#c4c0b5",
+                  border: "1px solid #a8a49a",
+                }}
+              />
+            ))}
+          </div>
+
+          <div
+            style={{
+              position: "absolute",
+              top: 232,
+              left: 48,
+              right: 48,
+              height: 40,
+              backgroundColor: `rgba(234,88,12,${problemHighlight * 0.18})`,
               borderRadius: 2,
-              transform: `skewX(-10deg)`,
+              transform: `skewX(-8deg) rotate(-1deg)`,
             }}
           />
 
           <div
             style={{
-              fontSize: 14,
-              color: "#9ca3af",
-              marginBottom: 20,
-              paddingBottom: 10,
-              borderBottom: "1px dashed #d1ccc0",
+              fontSize: 16,
+              color: "#8c7f6b",
+              marginBottom: 24,
+              marginLeft: 28,
+              paddingBottom: 12,
+              borderBottom: "1px dashed #d9d4c9",
             }}
           >
             2024年3月 · 种植笔记
@@ -177,12 +192,13 @@ export const OpeningScene: React.FC = () => {
                 style={{
                   opacity: lineOpacity,
                   transform: `translateX(${jitterX}px)`,
-                  fontSize: line.emphasis ? 20 : 19,
-                  color: line.emphasis ? "#c2410c" : "#374151",
+                  fontSize: line.emphasis ? 24 : 22,
+                  color: line.emphasis ? "#9c4b1c" : "#3d3a34",
                   fontFamily: "'Courier New', monospace",
-                  lineHeight: 1.9,
+                  lineHeight: 2,
+                  marginLeft: 28,
                   fontStyle: line.emphasis ? "italic" : "normal",
-                  fontWeight: line.emphasis ? 600 : 400,
+                  fontWeight: line.emphasis ? 700 : 400,
                 }}
               >
                 {line.text}
@@ -192,21 +208,22 @@ export const OpeningScene: React.FC = () => {
 
           <div
             style={{
-              marginTop: 20,
-              paddingTop: 12,
-              borderTop: "1px dashed #fecaca",
+              marginTop: 24,
+              marginLeft: 28,
+              paddingTop: 14,
+              borderTop: "1px dashed #e5a685",
               opacity: problemHighlight,
               display: "flex",
               alignItems: "center",
               gap: 8,
             }}
           >
-            <span style={{ fontSize: 16, color: "#dc2626" }}>→</span>
+            <span style={{ fontSize: 18, color: "#9c4b1c" }}>→</span>
             <span
               style={{
-                fontSize: 15,
-                color: "#dc2626",
-                fontWeight: 600,
+                fontSize: 18,
+                color: "#9c4b1c",
+                fontWeight: 700,
                 fontStyle: "italic",
               }}
             >
@@ -219,35 +236,35 @@ export const OpeningScene: React.FC = () => {
         <div
           style={{
             position: "absolute",
-            right: 120,
+            right: 90,
             top: "50%",
             transform: `translateY(-50%) translateX(${brandX}px)`,
             opacity: brandOpacity,
             textAlign: "left",
-            width: 420,
+            width: 500,
           }}
         >
           <div
             style={{
-              fontSize: 16,
-              color: "#22c55e",
-              fontWeight: 600,
-              marginBottom: 10,
-              letterSpacing: 2,
+              fontSize: 20,
+              color: "#8c6239",
+              fontWeight: 800,
+              marginBottom: 12,
+              letterSpacing: 3,
             }}
           >
             甘蔗种植管理系统
           </div>
 
-          <div style={{ marginBottom: 12 }}>{brandCharElements}</div>
+          <div style={{ marginBottom: 16 }}>{brandCharElements}</div>
 
           <div
             style={{
-              fontSize: 22,
-              color: "#22c55e",
-              fontWeight: 700,
-              letterSpacing: 4,
-              marginBottom: 22,
+              fontSize: 28,
+              color: "#8c6239",
+              fontWeight: 800,
+              letterSpacing: 5,
+              marginBottom: 28,
             }}
           >
             AGRISAGE CANE
@@ -255,14 +272,14 @@ export const OpeningScene: React.FC = () => {
 
           <div
             style={{
-              fontSize: 17,
-              color: "#86a88e",
-              lineHeight: 1.8,
+              fontSize: 24,
+              color: "#5c564a",
+              lineHeight: 1.9,
             }}
           >
             给每一块甘蔗地建一份档案
             <br />
-            <span style={{ color: "#f0fdf4", fontWeight: 600 }}>
+            <span style={{ color: "#2d5a27", fontWeight: 800 }}>
               不需要联网，数据就在你自己手里
             </span>
           </div>

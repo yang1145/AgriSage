@@ -11,8 +11,8 @@ import {
 
 /*
   场景4：核心功能 — 从种到收六步
-  27 ~ 42秒 (810 ~ 1260帧)
-  视觉：深色背景，2×3 卡片网格，错落排列。
+  41 ~ 68秒 (1230 ~ 2040帧)
+  视觉：浅色背景，6 张步骤卡片像桌面上的卡片一样铺开。
 */
 
 const STEPS = [
@@ -21,53 +21,46 @@ const STEPS = [
     action: "画地",
     desc: "地图上圈地块，自动算面积",
     example: "东岭地块 → 12.3亩 · 壤土",
-    color: "#3b82f6",
+    color: "#4a6fa5",
   },
   {
     num: "02",
     action: "定品种",
     desc: "从广西主推品种库中选",
     example: "桂糖44号 · 糖分 14.8%",
-    color: "#22c55e",
+    color: "#3d7a3a",
   },
   {
     num: "03",
     action: "记农事",
     desc: "施肥/灌溉/防虫/采收逐笔记录",
     example: "03-15 尿素40kg/亩 → 东岭",
-    color: "#f59e0b",
+    color: "#b86d29",
   },
   {
     num: "04",
     action: "看天气",
     desc: "实时气象+灾害预警",
     example: "⚠ 明晨霜冻 · 建议覆盖薄膜",
-    color: "#06b6d4",
+    color: "#2d8a9c",
   },
   {
     num: "05",
     action: "传照片",
     desc: "按生长阶段分期上传影像",
     example: "萌芽期 · 东岭地块 · 3张",
-    color: "#ec4899",
+    color: "#9c4b8c",
   },
   {
     num: "06",
     action: "出报告",
     desc: "Excel汇总 / PDF档案 / 一键备份",
     example: "2024春植季.pdf · 完整记录",
-    color: "#8b5cf6",
+    color: "#6b5b95",
   },
 ];
 
-const CARD_OFFSETS = [
-  { x: 0, y: 0 },
-  { x: 6, y: -4 },
-  { x: -3, y: 3 },
-  { x: -4, y: 6 },
-  { x: 3, y: 2 },
-  { x: -2, y: -3 },
-];
+const ROTATIONS = [-1.2, 0.8, -0.6, 1, -0.9, 0.5];
 
 export const FeaturesScene: React.FC = () => {
   const frame = useCurrentFrame();
@@ -76,7 +69,7 @@ export const FeaturesScene: React.FC = () => {
   const titleOpacity = interpolate(frame, [0, 0.7 * fps], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const titleY = interpolate(frame, [0, 0.8 * fps], [20, 0], {
+  const titleY = interpolate(frame, [0, 0.8 * fps], [24, 0], {
     extrapolateRight: "clamp",
   });
 
@@ -98,10 +91,8 @@ export const FeaturesScene: React.FC = () => {
       config: { damping: 16, stiffness: 80 },
     });
 
-    const scale = interpolate(cardProgress, [0, 1], [0.88, 1]);
-    const y = interpolate(cardProgress, [0, 1], [24, 0]);
+    const y = interpolate(cardProgress, [0, 1], [30, 0]);
     const opacity = interpolate(cardProgress, [0, 1], [0, 1]);
-    const rotate = CARD_OFFSETS[i].y * 0.25;
 
     return (
       <div
@@ -109,16 +100,16 @@ export const FeaturesScene: React.FC = () => {
         style={{
           width: 580,
           padding: "32px 30px 28px",
-          borderRadius: 16,
-          backgroundColor: "rgba(255,255,255,0.04)",
-          border: `1.5px solid ${step.color}18`,
-          transform: `translate(${CARD_OFFSETS[i].x}px, ${
-            CARD_OFFSETS[i].y + y
-          }px) scale(${scale}) rotate(${rotate}deg)`,
+          borderRadius: 2,
+          backgroundColor: "#fffdf7",
+          border: "1px solid #d9d4c9",
+          boxShadow: "3px 3px 0 #d9d4c9",
+          transform: `translateY(${y}px) rotate(${ROTATIONS[i]}deg)`,
           opacity,
           display: "flex",
           gap: 22,
           alignItems: "flex-start",
+          position: "relative",
         }}
       >
         <div
@@ -126,50 +117,29 @@ export const FeaturesScene: React.FC = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: 12,
+            gap: 10,
             flexShrink: 0,
           }}
         >
           <div
             style={{
-              fontSize: 52,
+              fontSize: 56,
               fontWeight: 900,
-              color: `${step.color}50`,
+              color: step.color,
               fontVariantNumeric: "tabular-nums",
               lineHeight: 1,
             }}
           >
             {step.num}
           </div>
-          <div
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: 12,
-              backgroundColor: `${step.color}10`,
-              border: `2px solid ${step.color}25`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              style={{
-                width: 14,
-                height: 14,
-                borderRadius: "50%",
-                backgroundColor: step.color,
-              }}
-            />
-          </div>
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
-              fontSize: 36,
-              fontWeight: 800,
-              color: "#f0fdf4",
+              fontSize: 38,
+              fontWeight: 900,
+              color: "#1c1917",
               marginBottom: 8,
             }}
           >
@@ -178,9 +148,9 @@ export const FeaturesScene: React.FC = () => {
 
           <div
             style={{
-              fontSize: 22,
-              color: "#86a88e",
-              lineHeight: 1.6,
+              fontSize: 23,
+              color: "#5c564a",
+              lineHeight: 1.65,
               marginBottom: 14,
             }}
           >
@@ -189,14 +159,15 @@ export const FeaturesScene: React.FC = () => {
 
           <div
             style={{
-              fontSize: 19,
+              fontSize: 18,
               color: step.color,
               fontFamily: "'Courier New', monospace",
               padding: "7px 16px",
-              borderRadius: 6,
-              backgroundColor: `${step.color}08`,
-              border: `1px solid ${step.color}12`,
+              borderRadius: 2,
+              backgroundColor: "#f4f1ea",
+              border: "1px solid #d9d4c9",
               display: "inline-block",
+              fontWeight: 800,
             }}
           >
             {step.example}
@@ -216,7 +187,7 @@ export const FeaturesScene: React.FC = () => {
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#0c1510",
+        backgroundColor: "#f4f1ea",
         fontFamily: "'Noto Sans SC', sans-serif",
       }}
     >
@@ -224,8 +195,9 @@ export const FeaturesScene: React.FC = () => {
         style={{
           position: "absolute",
           inset: 0,
+          opacity: 0.25,
           backgroundImage:
-            "radial-gradient(circle at 50% 50%, rgba(34,197,94,0.04) 0%, transparent 50%)",
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")",
         }}
       />
 
@@ -233,33 +205,33 @@ export const FeaturesScene: React.FC = () => {
         style={{
           display: "flex",
           flexDirection: "column",
-          padding: "48px 80px 40px",
+          padding: "52px 80px 44px",
         }}
       >
         <div
           style={{
             textAlign: "center",
-            marginBottom: 32,
+            marginBottom: 36,
             transform: `translateY(${titleY}px)`,
             opacity: titleOpacity,
           }}
         >
           <div
             style={{
-              fontSize: 56,
+              fontSize: 64,
               fontWeight: 900,
-              color: "#f0fdf4",
+              color: "#1c1917",
               letterSpacing: 2,
             }}
           >
             从种到收，就{" "}
-            <span style={{ color: "#22c55e" }}>六步</span>
+            <span style={{ color: "#2d5a27" }}>六步</span>
           </div>
           <div
             style={{
-              fontSize: 24,
-              color: "#86a88e",
-              marginTop: 10,
+              fontSize: 26,
+              color: "#5c564a",
+              marginTop: 12,
               opacity: subtitleOpacity,
             }}
           >
@@ -272,14 +244,14 @@ export const FeaturesScene: React.FC = () => {
             flex: 1,
             display: "flex",
             flexDirection: "column",
-            gap: 18,
+            gap: 20,
             justifyContent: "center",
           }}
         >
           <div
             style={{
               display: "flex",
-              gap: 20,
+              gap: 22,
               justifyContent: "center",
             }}
           >
@@ -288,7 +260,7 @@ export const FeaturesScene: React.FC = () => {
           <div
             style={{
               display: "flex",
-              gap: 20,
+              gap: 22,
               justifyContent: "center",
             }}
           >
@@ -299,14 +271,14 @@ export const FeaturesScene: React.FC = () => {
         <div
           style={{
             textAlign: "center",
-            paddingTop: 18,
+            paddingTop: 22,
             opacity: bottomOpacity,
           }}
         >
           <div
             style={{
-              fontSize: 22,
-              color: "#5c7c66",
+              fontSize: 24,
+              color: "#8c7f6b",
             }}
           >
             全程离线可用 · 数据不出村 · SQLite 本地存储

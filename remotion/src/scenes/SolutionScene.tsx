@@ -11,17 +11,17 @@ import {
 
 /*
   场景3：解决方案 — 桂收是什么
-  17 ~ 27秒 (510 ~ 810帧)
-  视觉：左侧模拟软件界面，右侧说明文字，整体深色统一背景。
+  24 ~ 41秒 (720 ~ 1230帧)
+  视觉：浅色背景，左侧简化的软件界面，右侧说明文字。
 */
 
 const MENU_ITEMS = [
-  { label: "控制台首页", icon: "▣" },
-  { label: "地块管理", icon: "◧" },
-  { label: "农事记录", icon: "✎" },
-  { label: "数据大屏", icon: "◫" },
-  { label: "气象数据", icon: "☁" },
-  { label: "系统设置", icon: "☰" },
+  { label: "控制台首页" },
+  { label: "地块管理" },
+  { label: "农事记录" },
+  { label: "数据大屏" },
+  { label: "气象数据" },
+  { label: "系统设置" },
 ];
 
 const CONTENT_DATA: Record<number, { title: string; lines: string[] }> = {
@@ -85,11 +85,10 @@ export const SolutionScene: React.FC = () => {
   const titleOpacity = interpolate(frame, [0, 0.7 * fps], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const titleY = interpolate(frame, [0, 0.8 * fps], [20, 0], {
+  const titleY = interpolate(frame, [0, 0.8 * fps], [24, 0], {
     extrapolateRight: "clamp",
   });
 
-  // 窗口入场
   const windowProgress = spring({
     frame: frame - 0.3 * fps,
     fps,
@@ -98,7 +97,6 @@ export const SolutionScene: React.FC = () => {
   const windowY = interpolate(windowProgress, [0, 1], [40, 0]);
   const windowOpacity = interpolate(windowProgress, [0, 1], [0, 1]);
 
-  // 菜单高亮
   const contentPhase = Math.min(
     Math.floor((frame - 2 * fps) / (1.2 * fps)),
     MENU_ITEMS.length - 1
@@ -107,7 +105,6 @@ export const SolutionScene: React.FC = () => {
   const currentContent = CONTENT_DATA[contentPhase] || CONTENT_DATA[0];
   const contentStartFrame = (2 + contentPhase * 1.2 + 0.3) * fps;
 
-  // 解说文字
   const descOpacity = interpolate(frame, [1.5 * fps, 2.5 * fps], [0, 1], {
     extrapolateRight: "clamp",
   });
@@ -115,7 +112,7 @@ export const SolutionScene: React.FC = () => {
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#0c1510",
+        backgroundColor: "#f4f1ea",
         fontFamily: "'Noto Sans SC', sans-serif",
       }}
     >
@@ -123,8 +120,9 @@ export const SolutionScene: React.FC = () => {
         style={{
           position: "absolute",
           inset: 0,
+          opacity: 0.25,
           backgroundImage:
-            "radial-gradient(circle at 20% 70%, rgba(59,130,246,0.04) 0%, transparent 40%)",
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")",
         }}
       />
 
@@ -132,22 +130,22 @@ export const SolutionScene: React.FC = () => {
         style={{
           display: "flex",
           flexDirection: "column",
-          padding: "44px 72px 40px",
+          padding: "52px 72px 44px",
         }}
       >
         <div
           style={{
             textAlign: "center",
-            marginBottom: 28,
+            marginBottom: 32,
             transform: `translateY(${titleY}px)`,
             opacity: titleOpacity,
           }}
         >
           <div
             style={{
-              fontSize: 44,
+              fontSize: 56,
               fontWeight: 900,
-              color: "#f0fdf4",
+              color: "#1c1917",
               letterSpacing: 1,
             }}
           >
@@ -155,9 +153,9 @@ export const SolutionScene: React.FC = () => {
           </div>
           <div
             style={{
-              fontSize: 17,
-              color: "#86a88e",
-              marginTop: 8,
+              fontSize: 24,
+              color: "#5c564a",
+              marginTop: 10,
             }}
           >
             打开浏览器就能用，离线也能跑
@@ -168,36 +166,37 @@ export const SolutionScene: React.FC = () => {
           style={{
             flex: 1,
             display: "flex",
-            gap: 36,
+            gap: 44,
             alignItems: "center",
           }}
         >
-          {/* 左侧：模拟界面 */}
+          {/* 左侧：简化界面 */}
           <div
             style={{
               flex: 1,
               height: "100%",
-              maxWidth: 920,
-              borderRadius: 16,
-              backgroundColor: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.08)",
+              maxWidth: 960,
+              borderRadius: 4,
+              backgroundColor: "#fffdf7",
+              border: "2px solid #d9d4c9",
               overflow: "hidden",
               transform: `translateY(${windowY}px)`,
               opacity: windowOpacity,
               display: "flex",
               flexDirection: "column",
+              boxShadow: "4px 4px 0 #d9d4c9",
             }}
           >
             {/* 标签栏 */}
             <div
               style={{
-                height: 44,
-                backgroundColor: "rgba(255,255,255,0.04)",
+                height: 48,
+                backgroundColor: "#f4f1ea",
                 display: "flex",
                 alignItems: "center",
                 padding: "0 18px",
                 gap: 10,
-                borderBottom: "1px solid rgba(255,255,255,0.06)",
+                borderBottom: "2px solid #d9d4c9",
               }}
             >
               <div
@@ -205,7 +204,7 @@ export const SolutionScene: React.FC = () => {
                   width: 12,
                   height: 12,
                   borderRadius: "50%",
-                  backgroundColor: "#ef4444",
+                  backgroundColor: "#d9d4c9",
                 }}
               />
               <div
@@ -213,7 +212,7 @@ export const SolutionScene: React.FC = () => {
                   width: 12,
                   height: 12,
                   borderRadius: "50%",
-                  backgroundColor: "#f59e0b",
+                  backgroundColor: "#d9d4c9",
                 }}
               />
               <div
@@ -221,17 +220,17 @@ export const SolutionScene: React.FC = () => {
                   width: 12,
                   height: 12,
                   borderRadius: "50%",
-                  backgroundColor: "#22c55e",
+                  backgroundColor: "#d9d4c9",
                 }}
               />
               <div
                 style={{
                   marginLeft: 14,
-                  fontSize: 13,
-                  color: "#5c7c66",
+                  fontSize: 14,
+                  color: "#8c7f6b",
                 }}
               >
-                桂收 · 甘蔗专用版 — localhost:5000
+                桂收 · 甘蔗专用版
               </div>
             </div>
 
@@ -241,9 +240,9 @@ export const SolutionScene: React.FC = () => {
               <div
                 style={{
                   width: 200,
-                  backgroundColor: "rgba(255,255,255,0.02)",
-                  borderRight: "1px solid rgba(255,255,255,0.06)",
-                  padding: "16px 12px",
+                  backgroundColor: "#faf8f2",
+                  borderRight: "2px solid #d9d4c9",
+                  padding: "18px 12px",
                   display: "flex",
                   flexDirection: "column",
                   gap: 4,
@@ -251,12 +250,12 @@ export const SolutionScene: React.FC = () => {
               >
                 <div
                   style={{
-                    fontSize: 18,
-                    fontWeight: 800,
-                    color: "#22c55e",
-                    marginBottom: 16,
+                    fontSize: 22,
+                    fontWeight: 900,
+                    color: "#2d5a27",
+                    marginBottom: 18,
                     paddingLeft: 8,
-                    letterSpacing: 2,
+                    letterSpacing: 3,
                   }}
                 >
                   桂收
@@ -269,24 +268,18 @@ export const SolutionScene: React.FC = () => {
                     <div
                       key={i}
                       style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 12,
-                        padding: "10px 14px",
-                        borderRadius: 8,
+                        padding: "11px 14px",
+                        borderRadius: 2,
                         backgroundColor: isActive
-                          ? "#22c55e"
+                          ? "#2d5a27"
                           : isVisited
-                            ? "rgba(34,197,94,0.08)"
+                            ? "#e8e4da"
                             : "transparent",
-                        color: isActive ? "#0c1510" : isVisited ? "#22c55e" : "#5c7c66",
-                        fontSize: 15,
-                        fontWeight: isActive ? 700 : 400,
+                        color: isActive ? "#fffdf7" : isVisited ? "#2d5a27" : "#5c564a",
+                        fontSize: 16,
+                        fontWeight: isActive ? 800 : 500,
                       }}
                     >
-                      <span style={{ fontSize: 15, width: 20, textAlign: "center" }}>
-                        {item.icon}
-                      </span>
                       {item.label}
                     </div>
                   );
@@ -294,21 +287,21 @@ export const SolutionScene: React.FC = () => {
               </div>
 
               {/* 内容区 */}
-              <div style={{ flex: 1, padding: "22px 28px", position: "relative" }}>
+              <div style={{ flex: 1, padding: "26px 32px", position: "relative" }}>
                 <div
                   style={{
-                    fontSize: 20,
-                    fontWeight: 700,
-                    color: "#f0fdf4",
-                    marginBottom: 18,
-                    paddingBottom: 12,
-                    borderBottom: "1px solid rgba(255,255,255,0.06)",
+                    fontSize: 26,
+                    fontWeight: 900,
+                    color: "#1c1917",
+                    marginBottom: 22,
+                    paddingBottom: 14,
+                    borderBottom: "2px solid #d9d4c9",
                   }}
                 >
                   {currentContent.title}
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                   {currentContent.lines.map((line, i) => {
                     const lineOpacity = interpolate(
                       frame,
@@ -324,23 +317,24 @@ export const SolutionScene: React.FC = () => {
                       <div
                         key={i}
                         style={{
-                          fontSize: 15,
-                          color: "#86a88e",
-                          lineHeight: 1.7,
+                          fontSize: 19,
+                          color: "#5c564a",
+                          lineHeight: 1.8,
                           opacity: lineOpacity,
                           display: "flex",
                           alignItems: "center",
-                          gap: 10,
+                          gap: 12,
                         }}
                       >
                         <span
                           style={{
-                            color: "#22c55e40",
-                            fontSize: 12,
+                            color: "#2d5a27",
+                            fontSize: 14,
                             flexShrink: 0,
+                            fontWeight: 800,
                           }}
                         >
-                          {"//"}
+                          —
                         </span>
                         {line}
                       </div>
@@ -355,9 +349,9 @@ export const SolutionScene: React.FC = () => {
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    height: 34,
-                    backgroundColor: "rgba(0,0,0,0.15)",
-                    borderTop: "1px solid rgba(255,255,255,0.05)",
+                    height: 36,
+                    backgroundColor: "#f4f1ea",
+                    borderTop: "2px solid #d9d4c9",
                     display: "flex",
                     alignItems: "center",
                     padding: "0 20px",
@@ -366,25 +360,26 @@ export const SolutionScene: React.FC = () => {
                 >
                   <span
                     style={{
-                      fontSize: 12,
-                      color: "#22c55e",
+                      fontSize: 14,
+                      color: "#2d5a27",
                       display: "flex",
                       alignItems: "center",
                       gap: 6,
+                      fontWeight: 800,
                     }}
                   >
                     <span
                       style={{
-                        width: 6,
-                        height: 6,
+                        width: 7,
+                        height: 7,
                         borderRadius: "50%",
-                        backgroundColor: "#22c55e",
+                        backgroundColor: "#2d5a27",
                       }}
                     />
                     离线模式运行中
                   </span>
-                  <span style={{ fontSize: 12, color: "#5c7c66" }}>|</span>
-                  <span style={{ fontSize: 12, color: "#5c7c66" }}>
+                  <span style={{ fontSize: 14, color: "#8c7f6b" }}>|</span>
+                  <span style={{ fontSize: 14, color: "#8c7f6b" }}>
                     SQLite 本地数据库
                   </span>
                 </div>
@@ -395,7 +390,7 @@ export const SolutionScene: React.FC = () => {
           {/* 右侧：说明 */}
           <div
             style={{
-              width: 560,
+              width: 620,
               flexShrink: 0,
               opacity: descOpacity,
             }}
@@ -403,21 +398,21 @@ export const SolutionScene: React.FC = () => {
             <div
               style={{
                 fontSize: 18,
-                color: "#22c55e",
-                fontWeight: 700,
+                color: "#8c6239",
+                fontWeight: 900,
                 marginBottom: 20,
-                letterSpacing: 2,
+                letterSpacing: 3,
               }}
             >
               一句话
             </div>
             <div
               style={{
-                fontSize: 36,
-                fontWeight: 800,
-                color: "#f0fdf4",
-                lineHeight: 1.5,
-                marginBottom: 28,
+                fontSize: 48,
+                fontWeight: 900,
+                color: "#1c1917",
+                lineHeight: 1.45,
+                marginBottom: 32,
               }}
             >
               它是专门为你家甘蔗地
@@ -426,9 +421,9 @@ export const SolutionScene: React.FC = () => {
             </div>
             <div
               style={{
-                fontSize: 22,
-                color: "#86a88e",
-                lineHeight: 2.1,
+                fontSize: 26,
+                color: "#5c564a",
+                lineHeight: 2,
               }}
             >
               地块、农事、天气、数据，一个页面全管完。
