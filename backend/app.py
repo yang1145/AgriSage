@@ -9,10 +9,13 @@ def create_app(project_root=None):
     if project_root is None:
         if 'AGRISAGE_HOME' in os.environ:
             project_root = os.environ['AGRISAGE_HOME']
-        elif getattr(sys, 'frozen', False) or '__compiled__' in dir(__builtins__) or not os.path.isfile(__file__):
+        elif getattr(sys, 'frozen', False):
             project_root = os.path.dirname(sys.executable)
         else:
             project_root = os.path.dirname(os.path.dirname(__file__))
+
+    # PyInstaller: 数据文件（前端、瓦片等）在 _MEIPASS 临时目录
+    resource_dir = os.environ.get('AGRISAGE_RESOURCE_DIR', project_root)
 
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -41,8 +44,7 @@ def create_app(project_root=None):
             db.session.commit()
 
     # 离线地图瓦片服务
-    _is_frozen = getattr(sys, 'frozen', False) or '__compiled__' in dir(__builtins__) or not os.path.isfile(__file__)
-    tiles_dir = os.path.join(project_root, 'tiles') if _is_frozen else os.path.join(project_root, 'frontend', 'public', 'tiles')
+    tiles_dir = os.path.join(resource_dir, 'tiles')
 
     @app.route('/tiles/<int:z>/<int:x>/<int:y>.png')
     def serve_tile(z, x, y):
@@ -52,7 +54,7 @@ def create_app(project_root=None):
         abort(404)
 
     # Serve frontend static files in production mode
-    frontend_dist = os.path.join(project_root, 'frontend', 'dist')
+    frontend_dist = os.path.join(resource_dir, 'frontend', 'dist')
 
     with open(os.path.join(project_root, 'agrisage_startup.log'), 'a', encoding='utf-8') as log:
         log.write(f'project_root = {project_root}\n')

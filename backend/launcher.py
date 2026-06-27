@@ -5,24 +5,37 @@ AgriSage 启动器 — 基于 tkinter 的服务管理界面
 
 import os
 import sys
-import time
-import threading
-import webbrowser
-import psutil
 
-# 确保项目路径正确
-# Nuitka 4.x 不设 sys.frozen 也不设 __compiled__，但编译后 __file__ 指向的文件不存在
-_is_frozen = (
-    getattr(sys, 'frozen', False)
-    or '__compiled__' in dir(__builtins__)
-    or not os.path.isfile(__file__)
-)
+# ═══════════════════════════════════════════════════════
+# 早期诊断与路径配置（必须在任何第三方库导入之前）
+# ═══════════════════════════════════════════════════════
+_is_frozen = getattr(sys, 'frozen', False)
+
 if _is_frozen:
-    # Nuitka/PyInstaller 打包后的路径：exe 所在目录即为 BASE_DIR
+    # PyInstaller: sys.frozen=True, sys._MEIPASS 指向临时解压目录
+    # exe 所在目录为 BASE_DIR（数据文件、前端、数据库等在此）
     BASE_DIR = os.path.dirname(sys.executable)
+
+    # 强制 numpy/OpenBLAS 使用通用 CPU 指令集
+    # 避免在旧 CPU 上触发 0xC000001D (STATUS_ILLEGAL_INSTRUCTION)
+    if 'OPENBLAS_CORETYPE' not in os.environ:
+        os.environ['OPENBLAS_CORETYPE'] = 'CORE2'
 else:
-    # 开发环境：launcher.py 位于 backend/，BASE_DIR 为项目根目录
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+CRASH_LOG = os.path.join(BASE_DIR, 'agrisage_crash.log')
+
+# 写入早期诊断日志（Python 已启动的证明）
+try:
+    with open(CRASH_LOG, 'w', encoding='utf-8') as f:
+        f.write(f'AgriSage 早期诊断 - Python 已启动\n')
+        f.write(f'BASE_DIR = {BASE_DIR}\n')
+        f.write(f'_is_frozen = {_is_frozen}\n')
+        f.write(f'sys.executable = {sys.executable}\n')
+        f.write(f'sys.version = {sys.version}\n')
+        f.write(f'os.getcwd = {os.getcwd()}\n')
+except Exception:
+    pass
 
 # 数据库路径（运行时自动创建）
 DATA_DIR = os.path.join(BASE_DIR, 'data')
@@ -39,9 +52,9 @@ class AgriSageLauncher:
     """AgriSage 服务启动器 — 在线程内运行 Flask 服务，避免子进程依赖问题"""
 
     def __init__(self):
-        self._server_thread: threading.Thread | None = None  # noqa: UP007
+        self._server_thread = None
         self.running = False
-        self._start_time: float | None = None  # noqa: UP007
+        self._start_time = None
         self._build_ui()
         self._start_monitor()
 
@@ -206,17 +219,19 @@ class AgriSageLauncher:
 
     def _run_flask_server(self):
         """在后台线程中启动 Flask waitress 服务器"""
+        import threading
         os.environ['AGRISAGE_HOME'] = BASE_DIR
 
         # 确保 backend 目录在 sys.path 中
-        if _is_frozen:
-            # 打包模式：app 模块已被 Nuitka 编译进 exe，直接导入
-            pass
-        else:
-            # 开发模式：添加 backend 到搜索路径
+        if not _is_frozen:
             backend_dir = os.path.join(BASE_DIR, 'backend')
             if backend_dir not in sys.path:
                 sys.path.insert(0, backend_dir)
+
+        # PyInstaller: 数据文件在 sys._MEIPASS 临时目录中
+        # 需要告诉 app.py 从 _MEIPASS 查找前端等资源
+        if _is_frozen and hasattr(sys, '_MEIPASS'):
+            os.environ['AGRISAGE_RESOURCE_DIR'] = sys._MEIPASS
 
         from app import create_app  # type: ignore[import-not-found]
         from waitress import serve
@@ -234,6 +249,7 @@ class AgriSageLauncher:
 
     def start_service(self):
         """启动 Flask 服务（在线程中）"""
+        import threading
         if self.running:
             return
 
@@ -245,6 +261,7 @@ class AgriSageLauncher:
             self._server_thread.start()
 
             self.running = True
+            import time
             self._start_time = time.time()
             self._update_status(True)
             self._set_buttons(running=True)
@@ -257,8 +274,6 @@ class AgriSageLauncher:
             return
 
         try:
-            # waitress 不支持优雅关闭，直接终止线程
-            # 通过设置标志让服务器线程退出
             self.running = False
             self._server_thread = None
             self._update_status(False)
@@ -268,24 +283,26 @@ class AgriSageLauncher:
 
     def restart_service(self):
         """重启服务"""
+        import time
         self.stop_service()
-        time.sleep(1.5)  # 等待上一个服务器线程释放端口
+        time.sleep(1.5)
         self.start_service()
 
     def open_browser(self):
         """打开浏览器"""
+        import webbrowser
         webbrowser.open(SERVICE_URL)
 
     # ── 状态更新 ────────────────────────────────────
 
-    def _update_status(self, running: bool):
+    def _update_status(self, running):
         if running:
             self.status_label.config(text='运行中', fg='#39ff14')
         else:
             self.status_label.config(text='已停止', fg='#ff6b35')
             self.runtime_label.config(text='运行时间: --')
 
-    def _set_buttons(self, running: bool):
+    def _set_buttons(self, running):
         if running:
             self.start_btn.config(state='disabled')
             self.stop_btn.config(state='normal')
@@ -297,19 +314,19 @@ class AgriSageLauncher:
             self.restart_btn.config(state='disabled')
             self.browser_btn.config(state='disabled')
 
-    def _show_error(self, msg: str):
+    def _show_error(self, msg):
         import tkinter.messagebox
         tkinter.messagebox.showerror('错误', msg)
 
     # ── 监控线程 ────────────────────────────────────
 
     def _start_monitor(self):
-        """启动后台监控线程，每 2 秒刷新一次数据"""
+        import threading
         thread = threading.Thread(target=self._monitor_loop, daemon=True)
         thread.start()
 
     def _monitor_loop(self):
-        """监控循环"""
+        import time
         while True:
             try:
                 self._refresh_info()
@@ -319,6 +336,9 @@ class AgriSageLauncher:
 
     def _refresh_info(self):
         """刷新监控数据"""
+        import psutil
+        import time
+
         # CPU 使用率
         cpu = psutil.cpu_percent(interval=None)
         self.root.after(0, lambda: self.cpu_label.config(
@@ -371,8 +391,58 @@ class AgriSageLauncher:
 
 def main():
     """入口函数：启动 tkinter GUI 界面"""
-    launcher = AgriSageLauncher()
-    launcher.run()
+    import traceback
+
+    # 逐个导入并记录，定位哪个模块导入失败
+    try:
+        with open(CRASH_LOG, 'a', encoding='utf-8') as f:
+            f.write('\n--- main() 开始执行 ---\n')
+    except Exception:
+        pass
+
+    try:
+        with open(CRASH_LOG, 'a', encoding='utf-8') as f:
+            f.write('导入 tkinter...\n')
+        import tkinter  # noqa: F401
+
+        with open(CRASH_LOG, 'a', encoding='utf-8') as f:
+            f.write('导入 psutil...\n')
+        import psutil  # noqa: F401
+
+        with open(CRASH_LOG, 'a', encoding='utf-8') as f:
+            f.write('导入完成，创建 UI...\n')
+
+        launcher = AgriSageLauncher()
+
+        with open(CRASH_LOG, 'a', encoding='utf-8') as f:
+            f.write('UI 创建成功，进入主循环\n')
+        # 清除崩溃日志（启动成功后无意义）
+        try:
+            os.remove(CRASH_LOG)
+        except Exception:
+            pass
+
+        launcher.run()
+
+    except Exception as e:
+        # 写入崩溃日志
+        try:
+            with open(CRASH_LOG, 'a', encoding='utf-8') as f:
+                f.write(f'\n!!! 启动崩溃 !!!\n')
+                f.write(f'{traceback.format_exc()}\n')
+        except Exception:
+            pass
+        # 弹窗提示用户
+        try:
+            import tkinter as tk
+            from tkinter import messagebox
+            root = tk.Tk()
+            root.withdraw()
+            messagebox.showerror('桂收 · 启动失败',
+                                 f'程序启动时发生错误:\n\n{e}\n\n'
+                                 f'详细信息已保存到:\n{CRASH_LOG}')
+        except Exception:
+            pass
 
 
 if __name__ == '__main__':

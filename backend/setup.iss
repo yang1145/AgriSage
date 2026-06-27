@@ -23,7 +23,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-InfoBeforeFile=..\docs\INSTALL_NOTES.txt
+; InfoBeforeFile=..\docs\INSTALL_NOTES.txt
 OutputDir=..\installer
 OutputBaseFilename=AgriSage-Setup-{#MyAppVersion}
 SetupIconFile=favicon.ico
@@ -93,12 +93,8 @@ Name: "desktopicon"; Description: "创建桌面快捷方式"; GroupDescription: 
 Name: "quicklaunchicon"; Description: "创建快速启动栏快捷方式"; GroupDescription: "附加图标:"; Flags: unchecked; OnlyBelowVersion: 6.1
 
 [Files]
-Source: "..\dist\AgriSage\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\dist\AgriSage\*.dll"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\dist\AgriSage\*.pyd"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\dist\AgriSage\frontend\*"; DestDir: "{app}\frontend"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\dist\AgriSage\tiles\*"; DestDir: "{app}\tiles"; Flags: ignoreversion recursesubdirs createallsubdirs skipifsourcedoesntexist
-Source: "favicon.ico"; DestDir: "{app}"; Flags: ignoreversion
+; PyInstaller 输出完整复制（exe + _internal/ 子目录）
+Source: "..\dist\AgriSage\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs skipifsourcedoesntexist
 
 [Dirs]
 Name: "{app}\uploads"
