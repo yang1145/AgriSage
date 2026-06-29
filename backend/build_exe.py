@@ -33,7 +33,7 @@ def clean():
 def build_frontend():
     """构建前端"""
     print('正在构建前端...')
-    subprocess.run(['npm', 'run', 'build'], cwd=FRONTEND_DIR, check=True)
+    subprocess.run(['npm', 'run', 'build'], cwd=FRONTEND_DIR, check=True, shell=True)
     print('前端构建完成')
 
 
